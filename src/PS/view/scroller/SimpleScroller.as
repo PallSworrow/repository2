@@ -66,7 +66,6 @@ package PS.view.scroller
 			//controller:
 			ctrl = new SimpleController(this);
 			draggable = true;
-			addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
 		}
 		
 		private function mouseWheel(e:MouseEvent):void 
@@ -81,14 +80,7 @@ package PS.view.scroller
 				e.preventDefault();
 			}
 		}
-		override public function dispose():void 
-		{
-			if (_layout) _layout.dispose();
-			_layout = null;
-			
-			draggable = false;
-			super.dispose();
-		}
+		
 		//==================================================== CUSTOMIZE: ====================================================
 		/**
 		 * Используется для создания элементов списка. должна иметь вид function(data:Object):Ipage

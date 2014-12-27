@@ -97,6 +97,19 @@ package PS.view.scroller
 			else
 			return bg.width;
 		}
+		public function setIndicatorBoxSize(value:int):void
+		{
+			var prop:Number = proportion;
+			var per:Number = percent;
+			if (isVertical)
+			bg.height = value;
+			else
+			bg.width = value;
+			
+			proportion = prop;
+			percent = percent;
+			
+		}
 		private function get indicatorSize():int
 		{
 			if (isVertical)

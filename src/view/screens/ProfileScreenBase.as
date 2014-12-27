@@ -1,12 +1,16 @@
 package view.screens 
 {
+	import adobe.utils.CustomActions;
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 	import flash.text.TextFormat;
 	import model.profiles.MusicianProfile;
 	import PS.model.BaseSprite;
+	import PS.model.dataProcessing.assetManager.ColorAsset;
 	import PS.model.interfaces.IviewElement;
+	import PS.model.PsImage;
 	import PS.view.button.interfaces.Ibtn;
 	import PS.view.button.PsButton;
 	import PS.view.factories.defaults.DefaultButtonFactory;
@@ -16,7 +20,9 @@ package view.screens
 	import PS.view.layouts.implementations.tagTyped.SimpleTagLayout;
 	import PS.view.layouts.interfaces.Ilayout;
 	import PS.view.layouts.interfaces.IlistLayout;
+	import PS.view.scroller.events.ScrollerEvent;
 	import PS.view.scroller.ListScroller;
+	import PS.view.scroller.ScrollBar;
 	import PS.view.textView.SimpleText;
 	import Swarrow.models.screenManager.interfaces.IscreenManager;
 	import flash.display.DisplayObjectContainer;
@@ -50,6 +56,7 @@ package view.screens
 		
 		
 		private var scroller:ListScroller;
+		private var sb:ScrollBar;
 		private var backBtn:Ibtn;
 		private var _allowBack:Boolean;
 		public function ProfileScreenBase(allowBack:Boolean) 
@@ -57,10 +64,16 @@ package view.screens
 			super();
 			_allowBack = allowBack;
 			scroller = new ListScroller(200, 100);
+			var sp:Sprite = new Sprite();
+			sp.addChild(new PsImage(new ColorAsset(20, 20)));
+			sb = new ScrollBar(100, new PsImage(new ColorAsset(20, 100)), sp );
+			sb.addEventListener(ScrollerEvent.SCROLL, function(e:Event) { scroller.percent = sb.percent} );
+			scroller.draggable = false;
 			//scroller.itemProvider = render;
 			scroller.snapToPages = false;
 			backBtn = DefaultButtonFactory.createBtn('Back');
 			addChild(scroller);
+			addChild(sb);
 			
 		}
 		override public function show(container:DisplayObjectContainer, params:Object, manager:IscreenManager):void 
@@ -86,7 +99,11 @@ package view.screens
 			else scroller.y = rect.y;
 			trace('SCREEN: ' + rect.y);
 			scroller.height = rect.bottomLower - scroller.y;
-			scroller.width = rect.width;
+			scroller.width = rect.width-30;
+			
+			sb.y = scroller.y;
+			sb.x = scroller.x + scroller.width + 5;
+			sb.setIndicatorBoxSize(scroller.height);
 			/*
 			graphics.clear();
 			graphics.beginFill(0,1);
