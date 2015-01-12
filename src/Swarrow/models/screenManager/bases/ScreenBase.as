@@ -7,7 +7,7 @@ package Swarrow.models.screenManager.bases
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import Swarrow.models.screenManager.interfaces.IscreenManager;
-	import Swarrow.tools.RectangleDispatcher;
+	import Swarrow.tools.dataObservers.RectangleObserver;
 	
 	/**
 	 * ...
@@ -41,7 +41,7 @@ package Swarrow.models.screenManager.bases
 		{
 			
 		}
-		protected function get rect():RectangleDispatcher
+		protected function get rect():RectangleObserver
 		{
 			return currentManager.rectangle;
 		}

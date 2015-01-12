@@ -1,6 +1,6 @@
 package Swarrow.models.screenManager.implts 
 {
-	import Swarrow.tools.RectangleDispatcher;
+	import Swarrow.tools.dataObservers.RectangleObserver;
 	import Swarrow.models.screenManager.interfaces.IscreenManager;
 	import Swarrow.models.screenManager.interfaces.IscreenHierarchy;
 	import Swarrow.models.screenManager.interfaces.Iscreen;
@@ -28,7 +28,7 @@ package Swarrow.models.screenManager.implts
 		//main vars:
 		private var hr:IscreenHierarchy;
 		private var cnt:DisplayObjectContainer;
-		private var rect:RectangleDispatcher;
+		private var rect:RectangleObserver;
 		private var filters:Vector.<InavigationFilter>;
 		//current stat:
 		private var currentScreen:Iscreen;
@@ -72,13 +72,14 @@ package Swarrow.models.screenManager.implts
 		
 		/* INTERFACE PS.models.screenManager.interfaces.IscreenManager */
 		
-		public function init(contaimer:DisplayObjectContainer, hierarchy:IscreenHierarchy, rectangle:Rectangle):void 
+		public function init(contaimer:DisplayObjectContainer, hierarchy:IscreenHierarchy, rectangle:RectangleObserver):void 
 		{
 			if (cnt) throw new Error(this + ' can not be inited more than once');
 			
 			cnt = contaimer;
 			hr = hierarchy;
-			rect = new RectangleDispatcher(rectangle);
+			trace(this, 'init', rectangle.currentValue);
+			rect = rectangle;
 		}
 	
 		
@@ -120,7 +121,7 @@ package Swarrow.models.screenManager.implts
 			if(res)
 			navigate(res);
 		}
-		public function get rectangle():RectangleDispatcher 
+		public function get rectangle():RectangleObserver
 		{
 			return rect;
 		}

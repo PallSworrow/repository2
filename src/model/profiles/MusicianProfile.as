@@ -7,6 +7,10 @@ package model.profiles
 	import model.profiles.interfaces.ImusicianProfile;
 	import model.profiles.interfaces.IskillProfile;
 	import PS.model.dataProcessing.profiles.UserProfile;
+	import Swarrow.tools.dataObservers.ArrayObserver;
+	import Swarrow.tools.dataObservers.BooleanObserver;
+	import Swarrow.tools.dataObservers.IntegerObserver;
+	import Swarrow.tools.dataObservers.StringObserver;
 	
 	/**
 	 * ...
@@ -14,67 +18,58 @@ package model.profiles
 	 */
 	public class MusicianProfile
 	{
-		public static function parse(str:String):MusicianProfile
+		public function parse(str:String):void
 		{
-			var res:MusicianProfile = new MusicianProfile();
-			//trace(str);
 			var obj:Object = JSON.parse(str);
-			//res.isMusician = obj.isMusiciant;
-			res.id = obj.id;
-			res.name = obj.name;
-			res.city = obj.city;
-			if(obj.searchForMusician ==1)res.searchForMusician = true;
-			if(obj.searchForGroup == 1) res.searchForGroup = true;
-			//for each(var mreq:Object in obj.s4mReqs) res.photoUrl.push(String(mreq));
-			//for each(var greq:Object in obj.s4gReqs) res.instruments.push(Skill.parse(greq));
-			for each(var pic:Object in obj.photos) res.photos.push(String(pic));
-			for each(var style:Object in obj.styles) res.styles.push(String(style));
-			//for each(var goal:Object in obj.goals) res.styles.push(String(style));
-			res.info = obj.info;
+			id = obj.id;
+			name.currentValue = obj.name;
+			city.currentValue = obj.city;
+			searchForMusician.currentValue = (obj.searchForMusician ==1);
+			searchForGroup.currentValue = (obj.searchForGroup == 1);
+			photos.currentValue = [];
+			for each(var pic:Object in obj.photos) photos.push(String(pic));
+			styles.currentValue = [];
+			for each(var style:Object in obj.styles) styles.push(String(style));
+			info.currentValue = String(obj.info);
+			
+			instruments.currentValue = [];
 			if (obj.instruments is String) obj.instruments = JSON.parse(obj.instruments);
 			for each(var skill:Object in obj.instruments)
 			{
 				try
-				{res.instruments.push(Skill.parse(skill)); }
+				{instruments.push(new Skill('',skill)); }
 				catch (e:Error){}
 			}
-			res.stageExperience = obj.stageExperience;
-			res.writeExperience = obj.writeExperinece;
-			if (obj.localTours == 1) res.localTours = true;
-			if(obj.worldTours ==1)res.worldTours = true;
-			if(obj.localToursReady ==1)res.localToursReady =true;
-			if(obj.worldToursReady ==1)res.worldToursReady = true;
-			if(obj.cityChangeReady ==1)res.cityChangeReady = true;
-			if(obj.countryChangeReady ==1)res.countryChangeReady = true;
-			if(obj.passport ==1)res.passport = true;
-			
-			return res;
+			stageExperience.currentValue = obj.stageExperience;
+			writeExperience.currentValue = obj.writeExperinece;
+			localTours.currentValue = (obj.localTours == 1);
+			worldTours.currentValue = (obj.worldTours ==1);
+			localToursReady.currentValue = (obj.localToursReady ==1);
+			worldToursReady.currentValue = (obj.worldToursReady ==1);
+			cityChangeReady.currentValue = (obj.cityChangeReady ==1);
+			countryChangeReady.currentValue = (obj.countryChangeReady ==1);
+			passport.currentValue = (obj.passport ==1);
 		}
-		public static function stringify(prof:MusicianProfile):String
+		public function stringify():String
 		{
 			var arr:Array = [];
-			arr.push(addStringProp('id', prof.id));
-			arr.push(addStringProp('name', prof.name));
-			arr.push(addStringProp('city', prof.city));
-			arr.push(addBoolProp('searchForMusician', prof.searchForMusician));
-			arr.push(addBoolProp('searchForGroup', prof.searchForGroup));
-			//arr.push('"userReqs":'+JSON.stringify(prof.userSearchReqs));
-			//arr.push('"groupReqs":' + JSON.stringify(prof.groupSearchReqs));
-			arr.push(addListProp('photos', prof.photos));
-			arr.push(addListProp('styles', prof.styles));
-			arr.push(addListProp('goals', prof.goals));
-			arr.push(addStringProp('info', prof.info));
-			arr.push(addListProp('instruments', prof.instruments));
-			
-			arr.push(addBoolProp('localTours', prof.localTours));
-			arr.push(addBoolProp('worldTours', prof.worldTours));
-			arr.push(addBoolProp('localToursReady', prof.localToursReady));
-			arr.push(addBoolProp('worldToursReady', prof.worldToursReady));
-			arr.push(addBoolProp('cityChangeReady', prof.cityChangeReady));
-			arr.push(addBoolProp('countryChangeReady', prof.countryChangeReady));
-			arr.push(addBoolProp('passport', prof.passport));
-			
-			
+			arr.push(addStringProp('id', id));
+			arr.push(addStringProp('name', name.currentValue));
+			arr.push(addStringProp('city', city.currentValue));
+			arr.push(addBoolProp('searchForMusician', searchForMusician.currentValue));
+			arr.push(addBoolProp('searchForGroup', searchForGroup.currentValue));
+			arr.push(addListProp('photos', photos.currentValue));
+			arr.push(addListProp('styles', styles.currentValue));
+			arr.push(addListProp('goals', goals.currentValue));
+			arr.push(addStringProp('info', info.currentValue));
+			arr.push(addListProp('instruments', instruments.currentValue));
+			arr.push(addBoolProp('localTours', localTours.currentValue));
+			arr.push(addBoolProp('worldTours', worldTours.currentValue));
+			arr.push(addBoolProp('localToursReady', localToursReady.currentValue));
+			arr.push(addBoolProp('worldToursReady', worldToursReady.currentValue));
+			arr.push(addBoolProp('cityChangeReady', cityChangeReady.currentValue));
+			arr.push(addBoolProp('countryChangeReady', countryChangeReady.currentValue));
+			arr.push(addBoolProp('passport', passport.currentValue));
 			return '{' + arr.join(',') + '}';
 			
 			function addStringProp(name:String, value:String):String
@@ -100,41 +95,43 @@ package model.profiles
 		}
 		
 		public var id:String;
-		public var name:String='';
-		public var city:String = '';
-		public var searchForMusician:Boolean = false;
-		public var searchForGroup:Boolean = false;
-		public var userSearchReqs:Vector.<IuserSearchRequest> = new Vector.<IuserSearchRequest>;
-		public var groupSearchReqs:Vector.<IgroupSearchRequest> = new Vector.<IgroupSearchRequest>;
-		public var photos:Vector.<String> = new Vector.<String>;
-		public var styles:Vector.<String> = new Vector.<String>;
-		public var goals:Vector.<String> = new Vector.<String>;
-		public var info:String;
-		public var instruments:Vector.<IskillProfile> = new Vector.<IskillProfile>;
-		public var stageExperience:int = 0;
-		public var writeExperience:int = 0;
-		public var localTours:Boolean = false;
-		public var worldTours:Boolean = false;
-		public var localToursReady:Boolean = false;
-		public var worldToursReady:Boolean = false;
-		public var cityChangeReady:Boolean = false;
-		public var countryChangeReady:Boolean = false;
-		public var passport:Boolean = false;
+		public var name:StringObserver=new StringObserver();
+		public var city:StringObserver = new StringObserver();
+		public var searchForMusician:BooleanObserver = new BooleanObserver(false);
+		public var searchForGroup:BooleanObserver = new BooleanObserver(false);
+		public var userSearchReq:ArrayObserver = new ArrayObserver();
+		public var groupSearchReqs:ArrayObserver = new ArrayObserver();
+		public var photos:ArrayObserver = new ArrayObserver();
+		public var styles:ArrayObserver = new ArrayObserver();
+		public var goals:ArrayObserver = new ArrayObserver();
+		public var info:StringObserver = new StringObserver();
+		public var instruments:ArrayObserver = new ArrayObserver(); 
+		public var stageExperience:IntegerObserver = new IntegerObserver(0);
+		public var writeExperience:IntegerObserver = new IntegerObserver(0);
+		public var localTours:BooleanObserver = new BooleanObserver(false);
+		public var worldTours:BooleanObserver = new BooleanObserver(false);
+		public var localToursReady:BooleanObserver = new BooleanObserver(false);
+		public var worldToursReady:BooleanObserver = new BooleanObserver(false);
+		public var cityChangeReady:BooleanObserver = new BooleanObserver(false);
+		public var countryChangeReady:BooleanObserver = new BooleanObserver(false);
+		public var passport:BooleanObserver = new BooleanObserver(false);
 		
 		
-		public var isMusician:Boolean=false;
+		public var isMusician:BooleanObserver=new BooleanObserver(false);
 		
-		public function MusicianProfile() 
+		public function MusicianProfile(data:String = null ) 
 		{
 			super();
-			
+			if(data) 
+			parse(data);
 		}
 	
 		public function getInstrumentTypes():Vector.<String>
 		{
 			var res:Vector.<String> = new Vector.<String>;
 			//trace(this, 'getInstrumentTypes');
-			for each(var instrument:IskillProfile in instruments)
+			var arr:Array = instruments.currentValue;
+			for each(var instrument:IskillProfile in arr)
 			{
 				//trace(instrument.type);
 				res.push(instrument.type);

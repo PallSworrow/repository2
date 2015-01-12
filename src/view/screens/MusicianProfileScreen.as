@@ -2,6 +2,7 @@ package view.screens
 {
 	import flash.geom.Rectangle;
 	import flash.text.TextFormat;
+	import flash.utils.Dictionary;
 	import model.constants.AMDMpopup;
 	import model.constants.InstrumentType;
 	import model.constants.SkillLevel;
@@ -18,138 +19,156 @@ package view.screens
 	import PS.view.layouts.implementations.listTyped.StringListLayout_light;
 	import PS.view.layouts.implementations.tagTyped.SimpleTagLayout;
 	import PS.view.textView.SimpleText;
-	import Swarrow.tools.valueManagers.funcBased.VecStringValueManager2;
-	import Swarrow.tools.valueManagers.objectBased.StringValueManager;
-	import Swarrow.tools.valueManagers.objectBased.VecStringValueManager;
+	import Swarrow.tools.dataObservers.IntegerObserver;
+	import Swarrow.tools.dataObservers.RectangleObserver;
 	import view.constants.Fonts;
+	import view.elements.pageModules.factories.CheckBoxFactory;
+	import view.elements.pageModules.factories.PhotosFactory;
+	import view.elements.pageModules.factories.TagModuleFactory;
+	import view.elements.pageModules.factories.TextModuleFactory;
+	import view.elements.PortfolioViewer;
+	import view.elements.TagsModule;
 	import view.factories.btns.HardCodeBtnFactory;
 	import view.factories.btns.TagFactory;
 	import view.factories.InstrumentIconFactory;
 	/**
 	 * ...
+	 * 
 	 * @author 
 	 */
 	public class MusicianProfileScreen extends ProfileScreenBase
 	{
 		
+		protected var _editable:Boolean;
+		protected var textModuleProvider:TextModuleFactory;
+		protected var photoModuleProvider:PhotosFactory;
+		protected var checkBoxProvider:CheckBoxFactory;
+		protected var tagsModelProvider:TagModuleFactory;
 		public function MusicianProfileScreen(allowBack:Boolean = false) 
 		{
 			super(allowBack);
+			_editable = false;
+			textModuleProvider = new TextModuleFactory( { maxChars:30, provider:createSingLineText } );
+			photoModuleProvider = new PhotosFactory();
+			checkBoxProvider = new CheckBoxFactory();
+			tagsModelProvider = new TagModuleFactory();
 		}
 		protected var profile:MusicianProfile;
 		override protected function read(data:Object):Array 
 		{
 			profile = data as MusicianProfile;
 			if (!profile) throw new Error('invaslid input data: ' + data);
-			var centerLine:int = rect.width * 0.6;
+			
+			var leftColumnWidth:IntegerObserver = new IntegerObserver();
+			leftColumnWidth.inherit(rect.wObserver, { multiply:0.6 } );
+			var rightColumnWidth:IntegerObserver = new IntegerObserver();
+			rightColumnWidth.inherit(rect.wObserver, { multiply:0.4 } );
+			
 			var res:Array = 
 			[
-				{type:LAYOUT_TAGS, 
-					rectangle:new Rectangle(0,0,rect.width,0),
-					placeMethod:function(root:SimpleTagLayout, objs:Object):void
+				{type:LAYOUT_TAGS, //HEAD
+					markers:{width:rect.wObserver,center:leftColumnWidth},
+					placeMethod:function(children:Dictionary, markers:Dictionary):void
 					{
-						if(objs.right && objs.left)
-						objs.right.x = root.borderRight - objs.right.width;
+						if(children.right)
+						{
+							children.right.x = markers.center;
+						}
 					},
 					list:
 					[
 						{type:LAYOUT_LIST, tagName:'left',
+							markers:{width:leftColumnWidth},
 							list:
 							[
-								{type:TEXT, font:Fonts.TITLE,maxChars:30,
-								provider:createSingLineText,
-								manager:new StringValueManager(profile, 'name') },
-								
-								{type:TEXT, font:Fonts.SIMPLE, maxChars:30,
-								provider:createSingLineText,
-								manager:new StringValueManager(profile, 'city') }
+								//NAME
+								{type:GLIF, 
+								params:{font:Fonts.TITLE, manager:profile.name },
+								provider:textModuleProvider},
+								//CITY
+								{type:GLIF,
+								params:{font:Fonts.SIMPLE,manager:profile.city },
+								provider:textModuleProvider}
 								
 							]
 						},
 						{type:LAYOUT_STRING, tagName:'right', 
-							rectangle:new Rectangle(0,0,rect.width/2,0),
+							markers:{width:rightColumnWidth},
 							list:
 							[
+								//SEARCH FOR MUSICIANS
 								{type:GRAPHICS,
 								content:createSearchFlag(profile.searchForMusician,HardCodeBtnFactory.S4MUS)}
 							]
 						}
 					]
 				},
-				{type:LAYOUT_TAGS,
-					rectangle:new Rectangle(0,0,rect.width,0),
-					placeMethod:function(root:SimpleTagLayout, objs:Object):void
+				{type:LAYOUT_TAGS, //WALL
+					markers:{center:leftColumnWidth, width:rect.wObserver},
+					placeMethod:function(children:Dictionary,markers:Dictionary):void
 					{
-						if (objs.right && objs.left)
+						if (children.right)
 						{
-							objs.right.x = centerLine;
+							children.right.x = markers.center;
 						}
 					},
 					list:
 					[
-						{type:LAYOUT_LIST,
+						{type:LAYOUT_LIST, //WALL LEFT
 							interval:10,
+							markers:{width:leftColumnWidth},
 							tagName:'left',
 							list:
 							[
-								{type:PHOTOS3,
-								rectangle:new Rectangle(0,0,centerLine,300),
-								manager:new VecStringValueManager(profile, 'photos'), editable:false },
+								//PHOTOS:
+								{type:GLIF,
+								params:{manager:profile.photos, editable:false },
+								provider:photoModuleProvider},
+								//STYLES:
 								
-								{type:LIST_MODULE, factory:new TagFactory(0x0044ff),editable:false,
-								layout:new StringListLayout_light(new Rectangle(0, 0, centerLine, 0)),
-								manager:new VecStringValueManager(profile, 'styles') ,
-								addMethod:{type:'input',tf:createSingLineText()}
-								},
-								
+								{type:GLIF,
+								params: { color:0x0044ff, title: 'Стили',editable:false, manager:profile.styles },
+								provider:tagsModelProvider},
+								//NAVIGATION BUTTONS:
 								{type:LAYOUT_STRING, 
-									rectangle:new Rectangle(0,0,centerLine,0),
 									list:
 									[
 										{type:BUTTON,
 										content: HardCodeBtnFactory.inst.createButton(HardCodeBtnFactory.MAIL)}
-										]
+									]
 								},
-								{type:GRAPHICS, font:Fonts.TITLE, content: 'Статус' },
-								{type:TEXT, manager:new StringValueManager(profile, 'info'), 
-								provider:createMultiLineText, width:centerLine - 160,
-								font:Fonts.SIMPLE },
 								
+								//INFO|STATUS:
+								{type:GRAPHICS, font:Fonts.TITLE, content: 'Статус' },
+								{type:GLIF, 
+									marakers:{width:leftColumnWidth.currentValue - 160},
+									params: 
+									{
+									provider:createMultiLineText,
+									font:Fonts.SIMPLE, manager:profile.info 
+									},
+									provider:textModuleProvider
+								},
+								//PORTFOLIO:
 								{type:GRAPHICS, font:Fonts.TITLE, content: 'Портфолио' },
-								{type:LAYOUT_LIST, interval:10, list:getPortfolio(profile,centerLine)}
+								///{type:LAYOUT_LIST, interval:10, list:getPortfolio(profile,centerLine)}
+								{type:GRAPHICS,  content:new PortfolioViewer(profile.instruments,leftColumnWidth)}
 								
 							]
 						},
-						{type:LAYOUT_LIST,
+						{type:LAYOUT_LIST, //WALL RIGHT
 							tagName:'right',
 							list:
 							[
-								{type:LIST_MODULE, factory:new InstrumentIconFactory(),editable:false,
+								//INSTRUMENT TYPES:
+								{type:LIST_MODULE, factory:function(param:Skill):Ibtn
+								{
+									return InstrumentIconFactory.inst.createButton(param.type);
+								},
+								editable:false,
 								layout:new SimpleListLayout(),
 								addMethod:{type:'btn',btn:DefaultButtonFactory.inst,btnName:'добавить',handler:createInstrument, maxItems:InstrumentType.list.length},
-								manager:new VecStringValueManager2(profile.getInstrumentTypes, 
-								function(value:Vector.<String>):void
-								{
-									var index:int;
-									var oldlist:Vector.<String> = profile.getInstrumentTypes();
-									for (var i:int = 0; i < value.length; i++) 
-									{
-										index = oldlist.indexOf(value[i]);
-										if (index == -1) 
-										{
-											profile.instruments.push(new Skill(value[i]));
-											trace('SAVE instrument types:',value[i]);
-										}
-										
-									}
-									
-								}
-								
-								) }
-								//{}
-								
-							
-							
+								manager:profile.instruments}
 							]
 						}
 					]	
@@ -165,7 +184,8 @@ package view.screens
 		{
 			var res:Array = [];
 			var item:Object;
-			for each (var instrument:IskillProfile in prof.instruments) 
+			var arr:Array = prof.instruments.currentValue;
+			for each (var instrument:Skill in arr) 
 			{
 				item =
 				{
@@ -174,25 +194,26 @@ package view.screens
 					rectangle:new Rectangle(0, 0, width, 0),
 					list:
 					[
+						//ICON:
 						{type:GRAPHICS, tagName:'icon',
 						content:InstrumentIconFactory.createIcon(instrument.type)},
+						//TAGS:
 						{type:GRAPHICS, tagName:'tagsTitle',
-						content:'Тэги: '},
-						
+						content:'Тэги: ' },
 						{type:LIST_MODULE, factory:new TagFactory(0x0044ff),editable:false,
 						layout:new StringListLayout_light(new Rectangle(0, 0, width-20, 0)),
 						tagName:'tags',
-						manager:new VecStringValueManager(instrument, 'tags') },
-						
+						manager:instrument.tags },
+						//AUDIO:
 						{type:LIST_MODULE, factory:DefaultButtonFactory.inst,editable:false,
 						layout:new StringListLayout_light(new Rectangle(0, 0, width-20, 0)),
 						tagName:'audio',
-						manager:new VecStringValueManager(instrument, 'audio') },
-						
+						manager:instrument.audio },
+						//VIDEO:
 						{type:LIST_MODULE, factory:DefaultButtonFactory.inst,editable:false,
 						layout:new StringListLayout_light(new Rectangle(0, 0, width-20, 0)),
 						tagName:'video',
-						manager:new VecStringValueManager(instrument,'video') }
+						manager:instrument.video }
 						
 					]
 				}
@@ -229,6 +250,16 @@ package view.screens
 			res.wordWrap = true;
 			res.multiline = true;
 			return res;
+		}
+		
+		public function get editable():Boolean 
+		{
+			return _editable;
+		}
+		
+		public function set editable(value:Boolean):void 
+		{
+			_editable = value;
 		}
 	}
 

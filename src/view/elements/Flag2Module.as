@@ -5,40 +5,62 @@ package view.elements
 	import flash.text.TextFormat;
 	import PS.model.BaseSprite;
 	import PS.model.interfaces.IviewElement;
+	import PS.view.button.ButtonPhaze;
+	import PS.view.button.interfaces.Ibtn;
 	import PS.view.button.PsButton;
 	import PS.view.clouds.CloudWindow;
 	import PS.view.factories.interfaces.IbuttonFactory;
 	import PS.view.layouts.implementations.listTyped.SimpleListLayout;
 	import PS.view.textView.SimpleText;
-	import Swarrow.tools.valueManagers.interfaces.IboolValueManager;
-	import Swarrow.tools.valueManagers.interfaces.IintValueManager;
+	import Swarrow.tools.dataObservers.IntegerObserver;
 	import view.factories.SimpleTextFactory;
 	
 	/**
 	 * ...
 	 * @author 
 	 */
-	public class Flag2Module extends FlagModule 
+	public class Flag2Module extends BaseSprite 
 	{
-		private var vm:IintValueManager;
+		//data:
+		private var vm:IntegerObserver;
 		private var options:Vector.<String>;
-		private var _currentIndex:int;
-		private var tf:SimpleText;
-		private var cloud:CloudWindow;
 		private var _editable:Boolean;
-		public function Flag2Module(valueManager:IintValueManager, btnProvider:Object, name:String,valueOptions:Vector.<String>,format:TextFormat) 
+		//glifs:
+		private var tf:SimpleText;
+		private var valueTf:SimpleText;
+		private var btn:Ibtn;
+		private var cloud:CloudWindow;
+		public function Flag2Module(valueManager:IntegerObserver, name:String,btnProvider:IbuttonFactory, valueOptions:Vector.<String>,format:TextFormat) 
 		{
+			
+			vm = valueManager;
+			options = valueOptions;
+			//create glif:
 			tf = SimpleTextFactory.inst.createText();
 			tf.autoSize = 'left';
 			tf.multiline = false;
 			tf.wordWrap = false;
+			tf.text = name;
+			
+			valueTf = SimpleTextFactory.inst.createText();
+			valueTf.autoSize = 'left';
+			valueTf.multiline = false;
+			valueTf.wordWrap = false;
+			valueTf.text = options[vm.currentValue];
+			
+			btn = btnProvider.createButton('ololo');
+			if (vm.currentValue > 0) btn.setPhaze(ButtonPhaze.ACTIVE);
+			
+			tf.x = btn.width;
+			valueTf.x = tf.x + tf.width;
+			
+			addElement(btn);
 			addChild(tf);
-			vm = valueManager;
-			options = valueOptions;
-			super( null, btnProvider, name, format);
+			addChild(valueTf);
 			
+			
+			//create cloude:
 			var list:SimpleListLayout = new SimpleListLayout();
-			
 			for each(var option:String in valueOptions) list.addItem(createOptionItem(option));
 			cloud = new CloudWindow(list);
 			cloud.offsetY = btn.height;
@@ -46,19 +68,29 @@ package view.elements
 			btn.setHandler(cloud.show);
 			
 		}
-		override public function get editable():Boolean 
+		
+		private function createOptionItem(option:String):IviewElement 
+		{
+			var tf:SimpleText = new SimpleText();
+			tf.wordWrap = false;
+			tf.multiline = false;
+			tf.autoSize = 'left';
+			tf.text = option;
+			return tf;
+		}
+		public function get editable():Boolean 
 		{
 			return _editable;
 		}
 		
-		override public function set editable(value:Boolean):void 
+		public function set editable(value:Boolean):void 
 		{
 			if (_editable == value) return;
 			_editable = value;
 			if (value) cloud.init(this, 'Clouds', this);
 			else cloud.kill();
 		}
-		private function createOptionItem(str:String):IviewElement
+		/*private function createOptionItem(str:String):IviewElement
 		{
 			var res:PsButton = new PsButton();
 			var tf:SimpleText = new SimpleText();
@@ -107,7 +139,7 @@ package view.elements
 			}
 			if (value == 0) current = false;
 			else current = true;
-		}
+		}*/
 	}
 
 }

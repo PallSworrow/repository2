@@ -21,10 +21,10 @@ package view.screens
 			super(false);
 			
 		}
-		
+		/*
 		private function save(e:Event=null):void 
 		{
-			trace('SAVE:',MusicianProfile.stringify(profile));
+			trace('SAVE:',profile.stringify());
 			var loader:URLLoader = new URLLoader();
 			var req:URLRequest = new URLRequest('http://allmusiciants.freevar.com/saveProfile.php')
 			var vars:URLVariables = new URLVariables();
@@ -79,30 +79,7 @@ package view.screens
 		{
 			trace(this, 'saved\n', e.target.data);
 		}
-		override protected function createListModule(data:Object):IviewElement 
-		{
-			data.editable = true;
-			data.manager.addEventListener('set', save);
-			return super.createListModule(data);
-		}
-		override protected function createCheckBox(data:Object):IviewElement 
-		{
-			data.editable = true;
-			data.manager.addEventListener('set', save);
-			return super.createCheckBox(data);
-		}
-		override protected function createPhotos(data:Object):IviewElement 
-		{
-			data.editable = true;
-			data.manager.addEventListener('set', save);
-			return super.createPhotos(data);
-		}
-		override protected function createText(data:Object):IviewElement 
-		{
-			data.editable = true;
-			data.manager.addEventListener('set', save);
-			return super.createText(data);
-		}
+		*/
 	}
 
 }

@@ -125,7 +125,7 @@ package model
 			var ld_res:Array = String(e.target.data).split('&');
 			var isNew:Boolean = !Boolean(ld_res[0]);
 			trace(this, 'login', ld_res[1]);
-			Data._viewerProfile = MusicianProfile.parse(String(ld_res[1]));
+			Data._viewerProfile = new MusicianProfile(String(ld_res[1]));
 			onComplete();
 		}
 	}

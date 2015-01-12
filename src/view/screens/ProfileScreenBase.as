@@ -27,12 +27,13 @@ package view.screens
 	import Swarrow.models.screenManager.interfaces.IscreenManager;
 	import flash.display.DisplayObjectContainer;
 	import Swarrow.models.screenManager.bases.ScreenBase;
-	import Swarrow.tools.valueManagers.interfaces.IboolValueManager;
-	import Swarrow.tools.valueManagers.interfaces.IintValueManager;
+	import Swarrow.view.layouts.LineLayout;
+	import Swarrow.view.layouts.TagLayout;
 	import view.constants.Fonts;
 	import view.elements.Flag2Module;
 	import view.elements.FlagModule;
 	import view.elements.ListModule;
+	import view.elements.pageModules.factories.GlifFactory;
 	import view.elements.Photo3Module;
 	import view.elements.TextModule;
 	
@@ -45,13 +46,14 @@ package view.screens
 		protected static const LAYOUT_TAGS:String = 'taglayout';
 		protected static const LAYOUT_LIST:String = 'listlayout';
 		protected static const LAYOUT_STRING:String = 'stringlayout';
-		protected static const TEXT:String = 'text';
-		protected static const PHOTOS3:String = 'photos3';
+		//protected static const TEXT:String = 'text';
+		//protected static const PHOTOS3:String = 'photos3';
 		protected static const GRAPHICS:String = 'graphics';
+		protected static const GLIF:String = 'glif';
 		protected static const BUTTON:String = 'btn';
 		protected static const LIST_MODULE:String = 'tags';
 		protected static const CHECKBOX:String = 'checkbox';
-		protected static const PROVIDER:String = 'provider';
+		//protected static const PROVIDER:String = 'provider';
 		
 		
 		
@@ -82,7 +84,6 @@ package view.screens
 			if (_allowBack)
 			{
 				backBtn.setHandler(currentManager.back);
-				
 				backBtn.addTo(this);
 			}
 			
@@ -98,7 +99,7 @@ package view.screens
 			}
 			else scroller.y = rect.y;
 			trace('SCREEN: ' + rect.y);
-			scroller.height = rect.bottomLower - scroller.y;
+			scroller.height = rect.height+rect.y - scroller.y;
 			scroller.width = rect.width-30;
 			
 			sb.y = scroller.y;
@@ -126,6 +127,7 @@ package view.screens
 			
 			var items:Array = read(data);
 			var element:IviewElement;
+			trace('layout length: ' + items.length);
 			for each (var item:Object in items) 
 			{
 				element = render(item);
@@ -133,7 +135,6 @@ package view.screens
 				scroller.addItem(element);
 				
 			}
-			
 		}
 		
 		private function element_change(e:Event):void 
@@ -152,60 +153,80 @@ package view.screens
 			throw 'this method must be overrided';
 			return null;
 		}
+		
 		protected function render(data:Object):IviewElement
 		{
 			var res:IviewElement;
 			var layout:Ilayout;
-			var listLayout:IlistLayout;
-			var tagLayout:SimpleTagLayout;
+			var listLayout:LineLayout;
+			var tagLayout:TagLayout;
 			var list:Array;
 			var item:Object;
 			var ve:IviewElement;
+			trace('RENDER: ' + data.type);
 			switch(data.type)
 			{
 				case LAYOUT_LIST:
-					listLayout = new SimpleListLayout();
+					listLayout = new LineLayout();
+					listLayout.widthObserver = 0;
 					list = data.list;
-					if (data.interval) listLayout.pagesInterval = data.interval;
+					trace(this, 'render list: ' + data.markers);
+					//if (data.interval) listLayout.i = data.interval;
 					for each(item in list)
 					{
+						item.parent = data;
 						ve = render(item);
-						listLayout.addItem(ve);
+						listLayout.addElement(ve);
+						
 						ve.addEventListener(Event.CHANGE, function(e:Event):void
 						{
 							listLayout.update();
 							
 						});
-					}	
+					}
+					listLayout.update();
 					res = listLayout;
 					break;
 					
 				case LAYOUT_STRING:
-					if (!data.rectangle) throw new Error('rectangle must be defined');
-					listLayout = new StringListLayout_light(data.rectangle as Rectangle);
+					listLayout = new LineLayout();
+					listLayout.widthObserver = getMarker('width', data);
 					list = data.list;
-					if (data.interval) listLayout.pagesInterval = data.interval;
+					//if (data.interval) listLayout.pagesInterval = data.interval;
 					for each(item in list)
 					{
+						
+						item.parent = data;
 						ve = render(item);
-						listLayout.addItem(ve);
+						
+					trace('glif pos: ', ve.x, ve.y);
+						listLayout.addElement(ve);
 						ve.addEventListener(Event.CHANGE, function(e:Event):void
 						{
 							listLayout.update();
 						});
 					}
+					
+					trace('glif pos: ', ve.x, ve.y);
 					res = listLayout;
 					break;
 					
 				case LAYOUT_TAGS:
-					tagLayout = new SimpleTagLayout(data.rectangle);
-					tagLayout.autoUpdate = false;
+					tagLayout = new TagLayout();
+					//tagLayout.autoUpdate = false;
 					tagLayout.placeMethod = data.placeMethod;
+					
+					tagLayout.addMarker(getMarker('x', data), 'x');
+					tagLayout.addMarker(getMarker('y', data), 'y');
+					tagLayout.addMarker(getMarker('width', data), 'width');
+					tagLayout.addMarker(getMarker('height', data), 'height');
+					tagLayout.addMarker(getMarker('center', data), 'center');
 					list = data.list;
 					for each(item in list)
 					{
+						item.parent = data;
 						ve = render(item);
-						tagLayout.addItem(ve, item.tagName);
+						tagLayout.addItem(ve as DisplayObject, item.tagName);
 						ve.addEventListener(Event.CHANGE, function(e:Event):void
 						{
 							tagLayout.update();
@@ -214,14 +235,18 @@ package view.screens
 					tagLayout.update();
 					res = tagLayout;
 					break;
-				case TEXT:
-					res = createText(data);
-					break;
-				case PHOTOS3:
-					res = createPhotos(data);
-					break;
 				case GRAPHICS:
 					res = createGraphics(data);
+					break;
+				case GLIF:
+					/*
+					data.params - style
+					data.provider - model
+					*/
+					var params:Object = data.params;
+					params.width = getMarker('width', data);
+					res = (data.provider as GlifFactory).createGlif(params);
+					trace('new GLIF: ' + res);
 					break;
 				case BUTTON:
 					res = createBtn(data);
@@ -229,19 +254,43 @@ package view.screens
 				case LIST_MODULE:
 					res = createListModule(data);
 				 	break;
+				
+				/*case TEXT:
+					res = createText(data);
+					break;
+				case PHOTOS3:
+					res = createPhotos(data);
+					break;
 				case CHECKBOX:
 					res = createCheckBox(data);
-					break;
+					break;*/
 				default: 
 					trace('ERROR --------------');
 					for (var prop:String in data) trace('data.' + prop + ' = ' + data[prop]);
 					throw new Error('invalid data type: ' + data.type);
 					break;
 			}
-			
 			return res;
+			function getProperty(name:String, obj:Object):Object
+			{
+				if (!obj) return null;
+				if (obj[name]) return obj[name];
+				else return getProperty(name, obj.parent);
+			}
+			function getMarker(name:String, obj:Object):Object
+			{
+				if (!obj) return null;
+				if (obj.markers)
+				{
+					if (obj.markers[name])
+					return obj.markers[name];
+					
+				}
+				return getMarker(name, obj.parent);
+				
+			}
 		}
-		protected function createText(data:Object):IviewElement
+		/*protected function createText(data:Object):IviewElement
 		{
 			var provider:Function = function():SimpleText
 			{
@@ -258,8 +307,8 @@ package view.screens
 		}
 		protected function createPhotos(data:Object):IviewElement
 		{
-			return new Photo3Module(data.rectangle, data.manager, data.editable);
-		}
+			//return new Photo3Module(data.rectangle, data.manager, data.editable);
+		}*/
 		protected function createGraphics(data:Object):IviewElement
 		{
 			if (data.content is IviewElement) return data.content as IviewElement
@@ -305,13 +354,14 @@ package view.screens
 			if (data.factory is Function) provider = data.factory;
 			if (data.factory is IbuttonFactory) 
 			provider = (data.factory as IbuttonFactory).createButton;
+			
 			var lm:ListModule = new ListModule(provider, data.manager, data.editable,data.addMethod);
 			if (data.layout is Function) data.layout = data.layout();
 			if (data.layout is IlistLayout) lm.layout = data.layout;
 			else throw new Error('invalid data.layout param: ' + data.layout);
 			return lm;
 		}
-		protected function createCheckBox(data:Object):IviewElement
+		/*protected function createCheckBox(data:Object):IviewElement
 		{
 			var res:FlagModule;
 			var format:TextFormat;
@@ -335,6 +385,7 @@ package view.screens
 			}
 			return res;
 		}
+		*/
 	}
 	
 

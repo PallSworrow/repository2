@@ -13,7 +13,7 @@ package
 	import Swarrow.models.screenManager.implts.ScreenManager;
 	import Swarrow.models.screenManager.interfaces.InavigationFilter;
 	import Swarrow.models.screenManager.interfaces.IscreenManager;
-	import Swarrow.tools.VectorDispatcher;
+	import Swarrow.tools.dataObservers.RectangleObserver;
 	import view.NavigationPanel;
 	/**
 	 * ...
@@ -43,12 +43,13 @@ package
 		
 		private function onInited():void 
 		{
+			trace(this, 'IINITED');
 			navigatePanel = new NavigationPanel();
 			addChild(navigatePanel);
 			//new VectorDispatcher();
 			manager = new ScreenManager();
 			//trace('PANEL:', navigatePanel.height);
-			manager.init(this, new Hierarchy(), new Rectangle(0, navigatePanel.height, Globals.width, Globals.height));
+			manager.init(this, new Hierarchy(), new RectangleObserver(0, navigatePanel.height, Globals.width, Globals.height));
 			manager.navigationFilters = new Vector.<InavigationFilter>;
 			manager.navigationFilters.push(navigatePanel);
 			

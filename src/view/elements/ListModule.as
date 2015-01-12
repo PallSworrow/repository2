@@ -10,7 +10,7 @@ package view.elements
 	import PS.view.layouts.implementations.tagTyped.SimpleTagLayout;
 	import PS.view.layouts.interfaces.IlistLayout;
 	import PS.view.textView.SimpleText;
-	import Swarrow.tools.valueManagers.interfaces.IvecStringValueManager;
+	import Swarrow.tools.dataObservers.ArrayObserver;
 	
 	/**
 	 * ...
@@ -18,15 +18,14 @@ package view.elements
 	 */
 	public class ListModule extends SimpleTagLayout 
 	{
-		private var manager:IvecStringValueManager;
+		private var manager:ArrayObserver;
 		private var _layout:IlistLayout;
-		private var currentList:Vector.<String>;
 		private var itemProvider:Function;
 		private var btn:Ibtn;
 		private var tf:SimpleText;
 		private var methodParams:Object
 		private var maxItems:int = 200;
-		public function ListModule(itemFactory:Function, listProvider:IvecStringValueManager,editable:Boolean, addMethod:Object) 
+		public function ListModule(itemFactory:Function, listProvider:ArrayObserver,editable:Boolean, addMethod:Object) 
 		{
 			super();
 			autoUpdate = false;
@@ -60,15 +59,15 @@ package view.elements
 			
 			
 			manager = listProvider;
+			manager.addListener(updateLayout);
 			itemProvider = itemFactory;
-			currentList = manager.getValue();
 			addEventListener(Event.ADDED_TO_STAGE, addedToStage);
 			placeMethod = updateMethod;
 		}
 		
 		private function btnHandler(handler:Function):void 
 		{
-			handler(currentList, 
+			handler(manager.currentValue, 
 			function(res:String):void
 			{
 				addNewItem(res);
@@ -103,19 +102,16 @@ package view.elements
 		private function addNewItem(str:String):void
 		{
 			if (!str || str == '') return;
-			currentList.push(str);
+			manager.push(str);/*
 			layout.addItemTo(itemProvider(str), layout.length - 1);
-			if (btn &&  currentList.length>= maxItems && layout)
+			if (btn &&  manager.length>= maxItems && layout)
 			{
 				layout.removeItem(btn);
 			}
-			save();
-			dispatchEvent(new Event(Event.CHANGE));
+			//save();
+			dispatchEvent(new Event(Event.CHANGE));*/
 		}
-		private function save():void 
-		{
-			manager.setValue(currentList);
-		}
+		
 		
 		private function updateMethod(root:SimpleTagLayout, elts:Object):void
 		{
@@ -131,12 +127,19 @@ package view.elements
 		{
 			if (layout) layout.dispose();
 			_layout = value;
+			updateLayout();
+
+		}
+		
+		private function updateLayout(e:Event=null):void 
+		{
+			
 			if (!layout) return;
-			for (var i:int = 0; i < currentList.length; i++) 
+			for (var i:int = 0; i < manager.length; i++) 
 			{
-				layout.addItem(itemProvider(currentList[i]));
+				layout.addItem(itemProvider(manager.getItem(i)));
 			}
-			if (btn && currentList.length< maxItems)
+			if (btn && manager.length< maxItems)
 			{
 				layout.addItem(btn);
 			}
@@ -144,7 +147,6 @@ package view.elements
 			{
 				tf.width = layout.borderWidth;
 			}
-		//	layout.addTo(this);
 			addItem(layout, 'layout');
 			update();
 		}

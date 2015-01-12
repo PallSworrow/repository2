@@ -2,16 +2,18 @@ package model.profiles
 {
 	import model.constants.SkillLevel;
 	import model.profiles.interfaces.IskillProfile;
+	import Swarrow.tools.dataObservers.ArrayObserver;
+	import Swarrow.tools.dataObservers.DataObserver;
+	import Swarrow.tools.dataObservers.IntegerObserver;
 	/**
 	 * ...
 	 * @author 
 	 */
-	public class Skill implements IskillProfile
+	public class Skill extends DataObserver
 	{
-		public static function parse(item:Object):Skill
+		public function parse(item:Object):void
 		{
-			
-			var res:Skill = new Skill(item.type);
+			type = item.type;
 			/*var arr:Array = str.split('&');
 			var item:Object={};
 			for each(var prop:Object in arr)
@@ -26,18 +28,38 @@ package model.profiles
 			
 			for each(var prop:Object in item.tags)
 			{
-				res.tags.push(String(prop));
+				tags.push(String(prop));
 			}
 			for each(var track:Object in item.audio)
 			{
-				res._audio.push(String(track));
+				audio.push(String(track));
 			}
 			for each(var link:Object in item.video)
 			{
-				res.video.push(String(link));
+				video.push(String(link));
 			}
-			res.level = item.level;
+			level.currentValue = item.level;
+			
+		}
+		public function stringify():String
+		{
+			var res:String = '{';
+			res += '"type":"' + type+'",';
+			res += '"tags":"['+arrToString(tags.currentValue) +'],';
+			res += '"audio":"['+arrToString(audio.currentValue)+'],';
+			res += '"video":"['+arrToString(video.currentValue)+']';
+			res += '}';
 			return res;
+			
+			function arrToString(arr:Array):String
+			{
+				for (var i:int = 0; i < arr.length; i++) 
+				{
+					arr[i] = '"' + arr[i] + '"';
+				}
+				return String(arr);
+				
+			}
 			
 		}
 		/*public function toString():String
@@ -54,60 +76,37 @@ package model.profiles
 			res = arr.join('&');
 			return res;
 		}*/
-		private var _type:String;
-		private var _tags:Vector.<String> = new Vector.<String>;
-		private var _level:int=0;
-		private var _audio:Vector.<String> = new Vector.<String>;
-		private var _video:Vector.<String> = new Vector.<String>;
+		public var type:String;
+		public var tags:ArrayObserver = new ArrayObserver();
+		public var level:IntegerObserver=new IntegerObserver(0);
+		public var audio:ArrayObserver = new ArrayObserver();
+		public var video:ArrayObserver = new ArrayObserver();
+
 		
-		public function Skill(type:String) 
+		public function Skill(skillTtype:String, data:Object=null) 
 		{
-			_type = type;
+			super(null);
+			type = skillTtype;
+			if (data) parse(data);
+			
+			tags.addListener(callUpdate);
+			level.addListener(callUpdate);
+			audio.addListener(callUpdate);
+			video.addListener(callUpdate);
+			
+		}
+		public function dispose() 
+		{
+			tags.removeListener(callUpdate);
+			level.removeListener(callUpdate);
+			audio.removeListener(callUpdate);
+			video.removeListener(callUpdate);
+		}
+		private function callUpdate():void
+		{
+			update( null);
 		}
 		
-		/* INTERFACE model.profiles.interfaces.IskillProfile */
-		
-		public function set audio(value:Vector.<String>):void 
-		{
-			_audio = value;
-		}
-		
-		public function get audio():Vector.<String> 
-		{
-			return _audio;
-		}
-		
-		public function set video(value:Vector.<String>):void 
-		{
-			_video = value;
-		}
-		
-		public function get video():Vector.<String> 
-		{
-			return _video;
-		}
-		
-		/* INTERFACE model.profiles.interfaces.IskillProfile */
-		
-		public function get type():String 
-		{
-			return _type;
-		}
-		
-		public function get tags():Vector.<String> 
-		{
-			return _tags;
-		}
-		
-		public function get level():int 
-		{
-			return _level;
-		}
-		
-		public function set level(value:int):void 
-		{
-			_level = value;
-		}
 		
 	}
 

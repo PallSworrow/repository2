@@ -1,5 +1,4 @@
-package view.elements 
-{
+package view.elements.searchmodules {
 	import adobe.utils.CustomActions;
 	import flash.display.DisplayObject;
 	import flash.display.Shape;
@@ -231,7 +230,7 @@ package view.elements
 				switch(item.type)
 				{
 					case TAGS:
-						editor = createTagBox(item.valueOptions, item.values,item.tagsLimit);
+						editor = createTagBox(item.values);
 						break;
 					case TEXT:
 						editor = createTextBox(item.valueOptions,item.values);
@@ -296,8 +295,8 @@ package view.elements
 				var owner:Ieditor = params.owner;
 				var sublist:IviewElement = params.subList;
 				var container:IlistLayout = params.container;
-				trace(this ,owner, 'onEditorUpdate');
-				trace(this , 'is empty:',owner.isEmpty);
+				//trace(this ,owner, 'onEditorUpdate');
+				//trace(this , 'is empty:',owner.isEmpty);
 				
 				var index:int = container.getIndexOf(owner);
 				if (owner.isEmpty) sublist.remove();
@@ -311,7 +310,7 @@ package view.elements
 			
 			function onElementUpdate(e:Event):void
 			{
-				trace(this, 'onElementUpdate');
+				//trace(e.target, 'onElementUpdate');
 				res.update();
 			}
 		}
@@ -323,7 +322,7 @@ package view.elements
 		{
 			return new FlagEditor(scroller.width-1);
 		}
-		protected function createTagBox(tagsOptions:Vector.<String>, values:Array, numLimit:int=-1):ItagEditor
+		protected function createTagBox(values:Array):ItagEditor
 		{
 			return new TagsModule(values,scroller.width-1);
 		}

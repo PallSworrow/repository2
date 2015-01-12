@@ -1,6 +1,5 @@
 package Swarrow.models.screenManager.interfaces 
 {
-	import Swarrow.tools.RectangleDispatcher;
 	import flash.display.DisplayObjectContainer;
 	import flash.events.IEventDispatcher;
 	import flash.geom.Rectangle;

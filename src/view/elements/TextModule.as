@@ -2,7 +2,7 @@ package view.elements
 {
 	import flash.text.TextFormat;
 	import PS.view.layouts.implementations.tagTyped.SimpleTagLayout;
-	import Swarrow.tools.valueManagers.interfaces.IstringValueManager;
+	import Swarrow.tools.dataObservers.StringObserver;
 	import flash.events.Event;
 	import flash.text.TextFieldType;
 	import PS.model.BaseSprite;
@@ -19,13 +19,13 @@ package view.elements
 	{
 		private var tf:SimpleText;
 		private var tfInput:SimpleText;
-		private var vm:IstringValueManager;
+		private var vm:StringObserver;
 		private var editBtn:Ibtn;
 		private var confirmBtn:Ibtn;
 		private var cancelBtn:Ibtn;
 		private var oldValue:String;
 		private var editable:Boolean;
-		public function TextModule(valueManager:IstringValueManager,provider:Function, allowEdit:Boolean ) 
+		public function TextModule(valueManager:StringObserver,provider:Function, allowEdit:Boolean ) 
 		{
 			super();
 			vm = valueManager;
@@ -34,7 +34,7 @@ package view.elements
 			disposeRemovedItems = false;
 			tf = provider();
 			tf.autoSize = 'left';
-			tf.text = vm.getValue();
+			tf.text = vm.currentValue;
 			//tf.border = true;
 			tfInput = provider();
 			tf.autoSize = 'left';
@@ -123,7 +123,7 @@ package view.elements
 		
 		public function save():void 
 		{
-			vm.setValue(tf.text);
+			vm.currentValue = tf.text;
 		}
 		
 	}

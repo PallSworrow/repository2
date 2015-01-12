@@ -21,10 +21,9 @@ package view.screens
 	import PS.view.textView.SimpleText;
 	import Swarrow.models.screenManager.bases.ScreenBase;
 	import Swarrow.models.screenManager.interfaces.IscreenManager;
-	import Swarrow.tools.RectangleDispatcher;
 	import view.constants.Fonts;
-	import view.elements.SearchPanelBase;
-	import view.elements.UserSearchPanel;
+	import view.elements.searchmodules.SearchPanelBase;
+	import view.elements.searchmodules.UserSearchPanel;
 	import view.factories.btns.TagFactory;
 	
 	/**
@@ -51,7 +50,7 @@ package view.screens
 		private function itemProvider(data:Object):Ipage 
 		{
 			var res:EmptyPage = new EmptyPage();
-			var prof:MusicianProfile = MusicianProfile.parse(String(data));
+			var prof:MusicianProfile = new MusicianProfile(String(data));
 			var preview:SimplePreview = new SimplePreview();
 			var tf0:SimpleText = new SimpleText();
 			var tf1:SimpleText = new SimpleText();
@@ -63,15 +62,17 @@ package view.screens
 			tf0.autoSize = tf1.autoSize = 'center';
 			tf0.defaultTextFormat = Fonts.SIMPLE;
 			tf1.defaultTextFormat = Fonts.HINTS;
-			tf0.text = prof.name;
-			tf1.text = prof.city;
+			tf0.text = prof.name.currentValue;
+			tf1.text = prof.city.currentValue;
 			
 			if(prof.photos.length>0)
-			preview.load(prof.photos[0]);
+			preview.load(prof.photos.currentValue[0]);
 			
 			tags.pagesInterval = 4;
-			var i:int=0
-			for each (var tag:String in prof.styles) 
+			var i:int = 0
+			var arr:Array;
+			arr = prof.styles.currentValue;
+			for each (var tag:String in arr) 
 			{
 				if (i > 5) break;
 				tags.addItem(tagFactory.createButton(tag));
@@ -137,6 +138,11 @@ package view.screens
 			addChild(panel);
 			searchBtn.addTo(this);
 			super.show(container, params, manager);
+			//rectangleChange();
+			
+			graphics.beginFill(0x0f0f0f);
+			graphics.drawRect(panel.x,panel.y,panel.width,panel.height);
+			graphics.endFill();
 		}
 		override protected function rectangleChange():void 
 		{
@@ -150,7 +156,7 @@ package view.screens
 			scroller.height = rect.height - 50;
 			panel.height = rect.height-panel.y-25
 			panel.y = searchBtn.y + searchBtn.height + 5;
-			panel.x = rect.bottomRight - panel.width - 25;
+			panel.x = rect.width - panel.width - 25;
 			searchBtn.x = panel.x + (panel.width - searchBtn.width) / 2;
 			
 			scroller.width  = rect.width - scroller.x - (panel.width+25+25);

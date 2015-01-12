@@ -9,7 +9,7 @@ package view.elements
 	import PS.view.button.interfaces.Ibtn;
 	import PS.view.factories.interfaces.IbuttonFactory;
 	import PS.view.scroller.pages.EmptyPage;
-	import Swarrow.tools.valueManagers.interfaces.IboolValueManager;
+	import Swarrow.tools.dataObservers.BooleanObserver;
 	
 	/**
 	 * ...
@@ -17,15 +17,16 @@ package view.elements
 	 */
 	public class FlagModule extends EmptyPage
 	{
-		private var vm:IboolValueManager;
+		private var vm:BooleanObserver;
 		protected var btn:Ibtn;
 		private var tf:TextField;
 		private var _editable:Boolean;
-		public function FlagModule(valueManager:IboolValueManager,btnProvider:Object,name:String, format:TextFormat) 
+		public function FlagModule(valueManager:BooleanObserver,btnProvider:Object,name:String, format:TextFormat) 
 		{
 			if (btnProvider is IbuttonFactory) btn = btnProvider.createButton(name);
 			if (btnProvider is Function) btn = btnProvider(name);
 			vm = valueManager;
+			update();
 			addElement(btn);
 		}
 		public function get editable():Boolean 
@@ -41,34 +42,27 @@ package view.elements
 		}
 		private function btn_phazeChanged(e:Event):void 
 		{
-			vm.setValue((btn.phaze == ButtonPhaze.ACTIVE));
-			save();
+			vm.currentValue = (btn.phaze == ButtonPhaze.ACTIVE);
+			
 		}
 		/* INTERFACE view.elements.profilePageModules.interfaces.IprofilePageModule */
 		
 		public function show():void 
 		{
-			current = vm.getValue();
+			vm.addListener(update);
 			
 			btn.addEventListener(ButtonEvent.PHAZE_CHANGED, btn_phazeChanged);
 		}
 		
-		public function save():void 
+		private function update(e:Event=null):void 
 		{
-			vm.setValue(current);
-		}
-		
-		public function get current():Boolean 
-		{
-			return btn.phaze == ButtonPhaze.ACTIVE;
-		}
-		
-		public function set current(value:Boolean):void 
-		{
-			
-			if (value) btn.setPhaze(ButtonPhaze.ACTIVE);
+			if (vm.currentValue) btn.setPhaze(ButtonPhaze.ACTIVE);
 			else btn.setPhaze(ButtonPhaze.DEFAULT);
 		}
+		
+		
+		
+	
 		
 		protected function get tfText():String 
 		{

@@ -1,5 +1,4 @@
-package view.elements 
-{
+package view.elements.searchmodules {
 	import model.constants.RequestParams;
 	import model.constants.SkillLevel;
 	import model.loadedData.SearchData;
@@ -17,7 +16,6 @@ package view.elements
 		}
 		override protected function init():Array 
 		{
-			trace(this, 'styles: ' + SearchData.STYLES);
 			var res:Array = [
 				{type:LIST, name: 'Город', list:
 					[
