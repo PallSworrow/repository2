@@ -90,6 +90,10 @@ package Swarrow.view.layouts
 			super.removeElement(element);
 			callUpdate(0);
 		}
+		public function clear():void
+		{
+			
+		}
 		private function callUpdate(from:int=0):void
 		{
 			var border:int= widthObserver.currentValue;

@@ -9,12 +9,8 @@ package Swarrow.tools.dataObservers.events
 	 */
 	public class ArrayObserverEvent extends Event 
 	{
-		public static const PUSH:String = 'push';
-		public static const UNSHIFT:String = 'unshift';
-		public static const POP:String = 'pop';
-		public static const SHIFT:String = 'shift';
 		public static const SET:String = 'set';
-		public static const SPLICE:String = 'splice';
+		public static const UPDATE:String = 'update';
 		
 		
 		private var _newElenents:Array;

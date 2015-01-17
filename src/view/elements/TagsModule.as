@@ -30,13 +30,15 @@ package view.elements
 		private var w:int = 200;
 		private var currValue:ArrayObserver;
 		private var _textFromat:TextFormat;
+		private var _editable:Boolean;
 		public function  TagsModule(name:String, value:ArrayObserver, itemProvider:Object,addBtnProvider:IbuttonFactory, editable:Boolean ) 
 		{
 			super();
+			_editable = editable;
 			if (!factory) factory = DefaultButtonFactory.inst;
 			factory = itemProvider;
 			currValue = value;
-			
+			currValue.addEventListener(Event.CHANGE, currValue_change);
 			
 			addBtn = addBtnProvider.createButton('добавить');
 			addBtn.setHandler(onAddBtn);
@@ -57,13 +59,7 @@ package view.elements
 			list = new StringListLayout_light(new Rectangle(0, 0, w, 0));
 			list.autoUpdate = false;
 			
-			var L:int = value.length;
-			for (var i:int = 0; i < L; i++) 
-			{
-				//trace('TEST: ' + value.getItem(i));
-				list.addItem(createTag(String(value.getItem(i))));
-			}
-			if (editable) list.addItem(addBtn);
+			
 			
 			addChild(_title);
 			addChild(list);
@@ -71,6 +67,18 @@ package view.elements
 			
 			title = name;
 			//currValue.addListener(
+		}
+		
+		private function currValue_change(e:Event=null):void 
+		{
+			var L:int = currValue.length;
+			for (var i:int = 0; i < L; i++) 
+			{
+				//trace('TEST: ' + value.getItem(i));
+				list.addItem(createTag(String(currValue.getItem(i))));
+			}
+			if (editable) list.addItem(addBtn);
+			update();
 		}
 		
 		private function onAddBtn():void 
@@ -89,9 +97,10 @@ package view.elements
 					{
 						list.removeItem(inputTF);
 						currValue.push(inputTF.text);
-						list.addItem(createTag(inputTF.text));
+						//list.addItem(createTag(inputTF.text));
 						inputTF.text = '';
 						list.addItem(inputTF);
+						list.stage.focus = inputTF;
 					}
 					else
 					cancel();
@@ -154,6 +163,11 @@ package view.elements
 		{
 			_title.defaultTextFormat = value;
 			inputTF.defaultTextFormat = value;
+		}
+		
+		public function get editable():Boolean 
+		{
+			return _editable;
 		}
 		
 	}

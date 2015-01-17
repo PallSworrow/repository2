@@ -84,7 +84,7 @@ package Swarrow.tools.dataObservers {
 			_prevValue = currentValue;
 			_currentValue.push(item);
 			update();
-			dispatchAOE(ArrayObserverEvent.PUSH,item);
+			dispatchAOE(ArrayObserverEvent.UPDATE,item);
 			listenToItem(item);
 		}
 		public function unshift(item:Object):void
@@ -92,7 +92,7 @@ package Swarrow.tools.dataObservers {
 			_prevValue = currentValue;
 			_currentValue.unshift(item);
 			update();
-			dispatchAOE(ArrayObserverEvent.UNSHIFT,item);
+			dispatchAOE(ArrayObserverEvent.UPDATE,item);
 			listenToItem(item);
 		}
 		public function pop():Object
@@ -100,7 +100,7 @@ package Swarrow.tools.dataObservers {
 			_prevValue = currentValue;
 			var res:Object = _currentValue.pop();
 			update();
-			dispatchAOE(ArrayObserverEvent.POP,res);
+			dispatchAOE(ArrayObserverEvent.UPDATE,null,res);
 			stopListeningItem(res);
 			return res;
 		}
@@ -109,7 +109,7 @@ package Swarrow.tools.dataObservers {
 			_prevValue = currentValue;
 			var res:Object = _currentValue.shift();
 			update();
-			dispatchAOE(ArrayObserverEvent.SHIFT,res);
+			dispatchAOE(ArrayObserverEvent.UPDATE,null,res);
 			stopListeningItem(res);
 			return res;
 		}
@@ -132,7 +132,7 @@ package Swarrow.tools.dataObservers {
 				stopListeningItem(_currentValue[i + length]);
 			}
 			var removes:Array = _currentValue.splice(from, length);
-			dispatchAOE(ArrayObserverEvent.SPLICE, removes);
+			dispatchAOE(ArrayObserverEvent.UPDATE, null,removes);
 			update();
 		}
 		
