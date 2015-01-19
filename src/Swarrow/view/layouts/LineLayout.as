@@ -6,97 +6,25 @@ package Swarrow.view.layouts
 	import PS.model.BaseSprite;
 	import PS.model.interfaces.IviewElement;
 	import Swarrow.tools.dataObservers.IntegerObserver;
+	import Swarrow.view.glifs.GlifEvent;
 	/**
 	 * ...
 	 * @author pall
 	 */
-	public class LineLayout extends BaseSprite
+	public class LineLayout extends LayoutBase
 	{
-		private var _widthObserver:IntegerObserver;
+		
 		public function LineLayout() 
 		{
-			_widthObserver = new IntegerObserver();
-		}
-		override public function get width():Number 
-		{
-			return widthObserver.currentValue;
+			super();
+			trueHeight = true;
 		}
 		
-		override public function set width(value:Number):void 
+		override protected function callUpdate(from:int=0):void
 		{
-			widthObserver.currentValue = value;
-			
-		}
-		
-		public function get widthObserver():Object 
-		{
-			return _widthObserver;
-		}
-		
-		public function set widthObserver(value:Object):void 
-		{
-			if (value is Number) _widthObserver.currentValue = int(value);
-			else if (value is IntegerObserver)
-			{
-				_widthObserver.removeListener(onObserverUpdate);
-				_widthObserver = value as IntegerObserver;
-				_widthObserver.addListener(onObserverUpdate);
-			}
-			
-		}
-		
-		private function onObserverUpdate(e:Event):void 
-		{
-			callUpdate(0);
-		}
-		override public function addChild(child:DisplayObject):DisplayObject 
-		{
-			var res:DisplayObject = super.addChild(child);
-			callUpdate(numChildren - 1);
-			return res;
-		}
-		override public function addChildAt(child:DisplayObject, index:int):DisplayObject 
-		{
-			var i:int = getChildIndex(child);
-			var res:DisplayObject = super.addChildAt(child, index);
-			if (i < index && i>=0)
-			callUpdate(i);
-			else 
-			callUpdate(index);
-			
-			return res;
-		}
-		override public function addElement(element:IviewElement):void 
-		{
-			super.addElement(element);
-			callUpdate(numChildren - 1);
-		}
-		override public function removeChild(child:DisplayObject):DisplayObject 
-		{
-			var index:int = getChildIndex(child);
-			var res:DisplayObject = super.removeChild(child);
-			callUpdate(index);
-			
-			return res;
-		}
-		override public function removeChildAt(index:int):DisplayObject 
-		{
-			var res:DisplayObject = super.removeChildAt(index);
-			callUpdate(index);
-			return res;
-		}
-		override public function removeElement(element:IviewElement):void 
-		{
-			super.removeElement(element);
-			callUpdate(0);
-		}
-		public function clear():void
-		{
-			
-		}
-		private function callUpdate(from:int=0):void
-		{
-			var border:int= widthObserver.currentValue;
+			trace(this, ' --- update: ' + from + ' ---- ');
+			from = 0;
+			var border:int= width;
 			var item:DisplayObject;
 			var horizontalInterval:int = 0;
 			var verticalInterval:int = 0;
@@ -117,29 +45,32 @@ package Swarrow.view.layouts
 			{
 				item = getChildAt(i);
 				if (lineHeight < item.height) lineHeight = item.height;
-				if (border == 0)
-				{
-					item.x = offsetX;
-					item.y = offsetY;
-					offsetY += item.height + verticalInterval;
-					continue;
-				}
 				
 				if (border>0 && item.width < border && item.width+offsetX > border)
 				{
-					lineHeight = 0;
-					offsetX = 0;
 					offsetY += lineHeight + horizontalInterval;
+					
+					offsetX = 0;
+					lineHeight = 0;
 				}
 				item.x = offsetX;
 				item.y = offsetY;
 				offsetX += item.width + verticalInterval;
 			}
 			
+			dispatchHeightChange();
 		}
-		public function update():void
+		override protected function onGlifHeightChange(e:GlifEvent):void 
 		{
-			callUpdate(0);
+			callUpdate(getChildIndex(e.target as DisplayObject));
+		}
+		override protected function onGlifWidthChange(e:GlifEvent):void 
+		{
+			callUpdate(getChildIndex(e.target as DisplayObject));
+		}
+		override protected function onWidthSet():void 
+		{
+			callUpdate();
 		}
 	}
 

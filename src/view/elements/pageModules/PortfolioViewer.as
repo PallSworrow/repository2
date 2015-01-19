@@ -1,8 +1,8 @@
-package view.elements 
-{
+package view.elements.pageModules {
 	import adobe.utils.CustomActions;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
+	import flash.globalization.Collator;
 	import flash.utils.Dictionary;
 	import model.constants.SkillLevel;
 	import model.profiles.Skill;
@@ -13,48 +13,53 @@ package view.elements
 	import Swarrow.tools.dataObservers.ArrayObserver;
 	import Swarrow.tools.dataObservers.events.ArrayObserverEvent;
 	import Swarrow.tools.dataObservers.IntegerObserver;
+	import Swarrow.view.layouts.ListLayout;
 	
 	/**
 	 * ...
 	 * @author pall
 	 */
-	public class PortfolioViewer extends SimpleListLayout 
+	public class PortfolioViewer extends ListLayout 
 	{
 		private var instruments:ArrayObserver;
 		private var instrumentsGlifs:Dictionary;
-		private var sizeRect:Rectangle;
-		private var wObserver:IntegerObserver;
-		public function PortfolioViewer(data:ArrayObserver, setWidth:Object) 
+		private var editable:Boolean;
+		public function PortfolioViewer(data:ArrayObserver,allowEdit:Boolean) 
 		{
-			wObserver = setWidth as IntegerObserver;
-			if (!wObserver && setWidth is Number) wObserver = new IntegerObserver(Number(setWidth));
-			
+			editable = allowEdit;
 			instrumentsGlifs = new Dictionary();
 			
 			super();
 			instruments = data;
 			instruments.addEventListener(ArrayObserverEvent.SET, show);
 			instruments.addEventListener(ArrayObserverEvent.UPDATE, instruments_update);
-			autoUpdate = false;
 			show();
 		}
+		
+		
 		/*
 		 * синхронизировать arrobserver со списком child-ов. через события обсервера.
 		 * 
 		*/
 		private function instruments_update(e:ArrayObserverEvent):void 
 		{
+			trace(this, 'instruments_update');
+			trace(e.newElenents.length, e.removedElements.length);
 			var skill:Skill;
 			for each(skill in e.newElenents)
 			createInstrument(skill);
-			for each(skill in e.removedElements)
-			createInstrument(skill);
+			for each(var obj:Object in e.removedElements)
+			{
+				trace(obj);
+				removeInstrument(obj);
+			}
+			update();
 		}
 		private function createInstrument(data:Skill):void
 		{
-			var res:SkillView = new SkillView(data, sizeRect);
+			var res:SkillView = new SkillView(data,editable);
 			instrumentsGlifs[data.type] = res;
-			addElement(res);
+			addChild(res);
 			
 		}
 		private function removeInstrument(data:Object):void
@@ -63,13 +68,15 @@ package view.elements
 			if (data is Skill) type = data.type;
 			else if (data is String) type = String(data);
 			else throw new Error('invalid parameter type: ' + data);
-			var item:IviewElement =  instrumentsGlifs[type];
-			if (item) removeElement(item);
+			var item:SkillView =  instrumentsGlifs[type];
+			if (item) removeChild(item);
 			delete instrumentsGlifs[type];
 		}
 		private function show(e:Event=null)
 		{
-			if(length != instruments.length)
+			trace(this, 'instruments: ' + instruments.length);
+			trace(this, 'length: ' + numChildren);
+			if(numChildren != instruments.length)
 			{
 				clear();
 				for (var i:int = 0; i < instruments.length; i++) 
@@ -77,7 +84,6 @@ package view.elements
 					createInstrument(instruments.getItem(i) as Skill);
 				}
 			}
-			update();
 				
 		}
 		

@@ -4,11 +4,12 @@ package view.elements.pageModules.factories
 	import flash.utils.Dictionary;
 	import PS.model.interfaces.IviewElement;
 	import PS.view.textView.SimpleText;
+	import Swarrow.view.glifs.IglifFactory;
 	/**
 	 * ...
 	 * @author pall
 	 */
-	public class GlifFactory 
+	public class GlifFactory implements IglifFactory
 	{
 		protected var requiredPrams:Array;
 		protected var factoryProps:Object

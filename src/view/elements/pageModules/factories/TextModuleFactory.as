@@ -3,7 +3,7 @@ package view.elements.pageModules.factories
 	import PS.model.interfaces.IviewElement;
 	import PS.view.textView.SimpleText;
 	import Swarrow.tools.dataObservers.IntegerObserver;
-	import view.elements.TextModule;
+	import view.elements.pageModules.TextModule;
 	/**
 	 * ...
 	 * @author pall

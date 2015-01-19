@@ -4,7 +4,7 @@ package view.elements.pageModules.factories
 	import PS.view.factories.defaults.DefaultButtonFactory;
 	import Swarrow.tools.dataObservers.IntegerObserver;
 	import view.constants.Fonts;
-	import view.elements.TagsModule;
+	import view.elements.pageModules.TagsModule;
 	import view.factories.btns.TagFactory;
 	/**
 	 * ...

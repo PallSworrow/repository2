@@ -154,7 +154,8 @@ package PS.view.scroller
 		
 		public function set percent(value:Number):void 
 		{
-			offset = value*getMaxOffset();
+			offset = value * getMaxOffset();
+			
 		}
 		
 		public function set offset(value:int):void 
@@ -174,6 +175,8 @@ package PS.view.scroller
 			if (value > 1) value = 1;
 			
 			indicatorSize = getIndicatorBoxSize() * value;
+			
+			percent = percent;
 		}
 		
 		public function getMaxOffset():int 

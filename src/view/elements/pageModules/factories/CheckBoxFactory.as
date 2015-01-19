@@ -5,8 +5,8 @@ package view.elements.pageModules.factories
 	import Swarrow.tools.dataObservers.BooleanObserver;
 	import Swarrow.tools.dataObservers.IntegerObserver;
 	import view.constants.Fonts;
-	import view.elements.Flag2Module;
-	import view.elements.FlagModule;
+	import view.elements.pageModules.Flag2Module;
+	import view.elements.pageModules.FlagModule;
 	/**
 	 * ...
 	 * @author pall

@@ -19,7 +19,7 @@ package Swarrow.models
 			inited = true;
 			
 			Globals._width = width;
-			Globals._height = width;
+			Globals._height = height;
 			Globals._stage = stage;
 		}
 		public function init( completeHandler:Function,config:String=null):void

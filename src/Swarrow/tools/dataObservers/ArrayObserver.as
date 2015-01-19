@@ -126,11 +126,11 @@ package Swarrow.tools.dataObservers {
 		public function splice(from:int, length:int=1):void
 		{
 			_prevValue = currentValue;
-			if (length >= _currentValue.length) length = _currentValue.length - 1;
-			for (var i:int = length; i >= 0; i--) 
+			for (var i:int = 0; i < length;i++ ) 
 			{
-				stopListeningItem(_currentValue[i + length]);
+				stopListeningItem(_currentValue[i+from]);
 			}
+			//trace('SPLICE: ' + from, length);
 			var removes:Array = _currentValue.splice(from, length);
 			dispatchAOE(ArrayObserverEvent.UPDATE, null,removes);
 			update();

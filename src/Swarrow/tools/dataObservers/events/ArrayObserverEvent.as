@@ -26,12 +26,12 @@ package Swarrow.tools.dataObservers.events
 			{
 				for each(prop in added) _newElenents.push(prop);
 			}
-			else _newElenents.push(added);
+			else if(added) _newElenents.push(added);
 			if (removed is Array)
 			{
 				for each(prop in removed) _removedElements.push(prop);
 			}
-			else _removedElements.push(removed);
+			else if(removed) _removedElements.push(removed);
 		}
 		public function get currentElements():Array
 		{

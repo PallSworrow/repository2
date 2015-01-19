@@ -1,5 +1,6 @@
 package model.profiles 
 {
+	import flash.events.Event;
 	import model.constants.SkillLevel;
 	import model.profiles.interfaces.IskillProfile;
 	import Swarrow.tools.dataObservers.ArrayObserver;
@@ -102,7 +103,7 @@ package model.profiles
 			audio.removeListener(callUpdate);
 			video.removeListener(callUpdate);
 		}
-		private function callUpdate():void
+		private function callUpdate(e:Event=null):void
 		{
 			update( null);
 		}

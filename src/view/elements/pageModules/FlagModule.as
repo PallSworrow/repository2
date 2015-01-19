@@ -1,5 +1,5 @@
-package view.elements 
-{
+package view.elements.pageModules {
+	import view.elements.pageModules.FlagModule;
 	import flash.events.Event;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
@@ -54,7 +54,7 @@ package view.elements
 			btn.addEventListener(ButtonEvent.PHAZE_CHANGED, btn_phazeChanged);
 		}
 		
-		private function update(e:Event=null):void 
+		private function update():void
 		{
 			if (vm.currentValue) btn.setPhaze(ButtonPhaze.ACTIVE);
 			else btn.setPhaze(ButtonPhaze.DEFAULT);

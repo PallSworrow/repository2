@@ -1,5 +1,4 @@
-package view.elements 
-{
+package view.elements.pageModules {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.text.TextFormat;

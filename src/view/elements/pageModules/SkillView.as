@@ -1,5 +1,4 @@
-package view.elements 
-{
+package view.elements.pageModules {
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
@@ -13,8 +12,13 @@ package view.elements
 	import PS.view.layouts.implementations.tagTyped.SimpleTagLayout;
 	import PS.view.textView.SimpleText;
 	import Swarrow.tools.dataObservers.events.ArrayObserverEvent;
+	import Swarrow.view.glifs.Glif;
+	import Swarrow.view.glifs.GlifEvent;
+	import Swarrow.view.layouts.LayoutBase;
 	import Swarrow.view.layouts.LineLayout;
+	import Swarrow.view.layouts.ListLayout;
 	import view.factories.btns.HardCodeBtnFactory;
+	import view.factories.btns.TagFactory;
 	import view.factories.InstrumentIconFactory;
 	import view.factories.tags.TestTagFactory;
 	
@@ -22,28 +26,30 @@ package view.elements
 	 * ...
 	 * @author pall
 	 */
-	public class SkillView extends BaseSprite 
+	public class SkillView extends LayoutBase 
 	{
 		private var skill:Skill;
 		private var icon:DisplayObject;
 		private var tags:TagsModule;
 		private var level:DisplayObject;
-		private var videoLayout:LineLayout;
-		private var audioLayout:LineLayout;
+		private var videoLayout:ListLayout;
+		private var audioLayout:ListLayout;
 		private var video:Dictionary;
 		private var audio:Dictionary;
-		public function SkillView(data:Skill,rectangle:Rectangle=null) 
+		private var editable:Boolean;
+		public function SkillView(data:Skill,allowEdit:Boolean) 
 		{
 			super();
+			trueHeight = true;
 			skill = data;
+			editable = allowEdit;
 			//create glifs
 			
 			icon = InstrumentIconFactory.createIcon(skill.type);
-			tags = new TagsModule('Тэги:',data.tags,TestTagFactory.inst,DefaultButtonFactory.inst,false)
-			videoLayout = new LineLayout();
-			videoLayout.widthObserver = 0;
-			audioLayout = new LineLayout();
-			audioLayout.widthObserver = 0;
+			tags = new TagsModule('Тэги:',data.tags,new TagFactory(),DefaultButtonFactory.inst,editable)
+			videoLayout = new ListLayout();
+			audioLayout = new ListLayout();
+			videoLayout.ignorNonGlifs = false;
 			
 			//fill data
 			updateVideo();
@@ -53,9 +59,8 @@ package view.elements
 			addChild(tags);
 			addChild(videoLayout);
 			addChild(audioLayout);
-			
-			skill.addListener(placeMethod);
-			placeMethod();
+			//skill.addListener(placeMethod);
+			callUpdate();
 			
 		}
 		private function updateVideo(e:ArrayObserverEvent=null):void
@@ -90,6 +95,7 @@ package view.elements
 				videoLayout.removeElement(element);
 				delete video[val];
 			}
+			
 		}
 		private function updateAudio(e:ArrayObserverEvent=null):void
 		{
@@ -123,6 +129,7 @@ package view.elements
 				audioLayout.removeElement(element);
 				delete audio[val];
 			}
+			//placeMethod();
 		}
 		private function createNewVideo(data:String):IviewElement
 		{
@@ -137,18 +144,29 @@ package view.elements
 			return res;
 		}
 		
-		
-		private function placeMethod(e:Event=null):void
+		override protected function onWidthSet():void 
 		{
-			tags.x = icon.width;
+			callUpdate();
+		}
+		private var flag:Boolean = true;
+		override protected function callUpdate(index:int=0):void 
+		{
+			flag = false;
+			tags.x = videoLayout.x = audioLayout.x = icon.width;
 			//level.y = icon.height + 10;
+			tags.width = videoLayout.width = audioLayout.width = _width - tags.x;
 			videoLayout.y = tags.y + tags.height;
 			audioLayout.y = videoLayout.y + videoLayout.height;
+			
+			flag = true;
+			dispatchHeightChange();
 		}
-		private function testFactory(w:int, h:int):DisplayObject
+		override protected function onGlifHeightChange(e:GlifEvent):void 
 		{
-			return new PsImage(new ColorAsset(w, h));
+			if (flag)
+			callUpdate();
 		}
+		
 		
 	}
 

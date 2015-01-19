@@ -95,11 +95,13 @@ package PS.view.previewer.bases {
 		
 		override public function set height(value:Number):void 
 		{
+			//
 			msk.height = value;
 			update();
 		}
 		override public function set width(value:Number):void 
 		{
+			if(value == 0) throw new Error('value == 0')
 			msk.width = value;
 			update();
 		}

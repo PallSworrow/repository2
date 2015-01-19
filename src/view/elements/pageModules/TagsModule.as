@@ -1,5 +1,4 @@
-package view.elements 
-{
+package view.elements.pageModules {
 	import flash.events.Event;
 	import flash.events.FocusEvent;
 	import flash.events.KeyboardEvent;
@@ -14,23 +13,27 @@ package view.elements
 	import PS.view.layouts.implementations.listTyped.StringListLayout_light;
 	import PS.view.textView.SimpleText;
 	import Swarrow.tools.dataObservers.ArrayObserver;
+	import Swarrow.tools.dataObservers.events.ArrayObserverEvent;
+	import Swarrow.view.glifs.Glif;
+	import Swarrow.view.glifs.GlifEvent;
+	import Swarrow.view.layouts.LineLayout;
 	import view.constants.Fonts;
 	
 	/**
 	 * ...
 	 * @author pall
 	 */
-	public class TagsModule extends BaseSprite 
+	public class TagsModule extends Glif 
 	{
-		private var list:StringListLayout_light;
+		private var list:LineLayout;
 		private var _title:SimpleText;
 		private var addBtn:Ibtn;
 		private var inputTF:SimpleText;
 		private var factory:Object;
-		private var w:int = 200;
 		private var currValue:ArrayObserver;
 		private var _textFromat:TextFormat;
 		private var _editable:Boolean;
+		private var lastElemet:IviewElement;
 		public function  TagsModule(name:String, value:ArrayObserver, itemProvider:Object,addBtnProvider:IbuttonFactory, editable:Boolean ) 
 		{
 			super();
@@ -38,7 +41,7 @@ package view.elements
 			if (!factory) factory = DefaultButtonFactory.inst;
 			factory = itemProvider;
 			currValue = value;
-			currValue.addEventListener(Event.CHANGE, currValue_change);
+			currValue.addEventListener(ArrayObserverEvent.UPDATE, updateList);
 			
 			addBtn = addBtnProvider.createButton('добавить');
 			addBtn.setHandler(onAddBtn);
@@ -56,8 +59,9 @@ package view.elements
 			inputTF.type = TextFieldType.INPUT;
 			textFromat = Fonts.SIMPLE;
 			
-			list = new StringListLayout_light(new Rectangle(0, 0, w, 0));
+			list = new LineLayout();
 			list.autoUpdate = false;
+			list.addEventListener(GlifEvent.HEIGHT_CHANGE, list_heightChange);
 			
 			
 			
@@ -66,26 +70,58 @@ package view.elements
 			
 			
 			title = name;
+			if (editable) lastElemet = addBtn;
+			updateList();
+			
 			//currValue.addListener(
 		}
 		
-		private function currValue_change(e:Event=null):void 
+		private function updateList(e:ArrayObserverEvent=null):void 
 		{
-			var L:int = currValue.length;
-			for (var i:int = 0; i < L; i++) 
+			var L:int
+			if (!e)
 			{
-				//trace('TEST: ' + value.getItem(i));
-				list.addItem(createTag(String(currValue.getItem(i))));
+				L = currValue.length;
+				for (var i:int = 0; i < L; i++) 
+				{
+					//trace('TEST: ' + value.getItem(i));
+					createTagView(String(currValue.getItem(i)));
+				}
+				
 			}
-			if (editable) list.addItem(addBtn);
-			update();
+			else
+			{
+				for (var j:int = 0; j < e.newElenents.length; j++) 
+				{
+					createTagView(String(e.newElenents[j]));
+				}
+				for (var k:int = 0; k < e.removedElements.length; k++) 
+				{
+					killTagView(String(e.removedElements[k]));
+				}
+			}
+			
+			if (lastElemet)
+			{
+				list.addElement(lastElemet);
+			}
+			list.update();
 		}
 		
+		private function list_heightChange(e:GlifEvent):void 
+		{
+			dispatchHeightChange();
+		}
+		
+	
 		private function onAddBtn():void 
 		{
-			list.removeItem(addBtn);
-			list.addItem(inputTF);
+			list.removeElement(addBtn);
+			list.addElement(inputTF);
+			lastElemet = inputTF;
+			
 			list.stage.focus = inputTF;
+			
 			inputTF.addEventListener(FocusEvent.FOCUS_OUT, cancel);
 			inputTF.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
 			
@@ -95,53 +131,55 @@ package view.elements
 				{
 					if(inputTF.text != '')
 					{
-						list.removeItem(inputTF);
+						list.removeElement(inputTF);
 						currValue.push(inputTF.text);
 						//list.addItem(createTag(inputTF.text));
 						inputTF.text = '';
-						list.addItem(inputTF);
+						//list.addElement(inputTF);
 						list.stage.focus = inputTF;
+						//list.update();
 					}
 					else
 					cancel();
 					
 				}
 			}
-			function cancel(e:FocusEvent):void 
+			function cancel(e:FocusEvent=null):void 
 			{
 				
-				list.removeItem(inputTF);
-				list.addItem(addBtn);
+				list.removeElement(inputTF);
+				list.addElement(addBtn);
+				lastElemet = addBtn;
 				inputTF.text = '';
+				list.update();
 				
 			}
 		}
 		
-		private function update():void
+		override protected function onWidthSet():void 
 		{
+			
 			list.x = _title.width + 5;
-			list.borderWidth = w - list.x;
-			list.update();
+			list.width = width - list.x;
+			//list.update();
 		}
-		private function createTag(name:String):IviewElement
+		private function createTagView(name:String):void
 		{
-			if (factory is Function) return factory(name);
-			else if (factory is IbuttonFactory) return factory.createButton(name);
+			var item:IviewElement;
+			if (factory is Function) item =  factory(name);
+			else if (factory is IbuttonFactory) item =  factory.createButton(name);
 			else throw new Error('invalid itemProvider:' + factory);
-			return null;
+			list.addElement(item);
+			
+			
+		}
+		private function killTagView(selector:Object):void
+		{
+			
 		}
 		//public:
 		
-		override public function get width():Number 
-		{
-			return w;
-		}
 		
-		override public function set width(value:Number):void 
-		{
-			w = value;
-			update();
-		}
 		
 		public function get title():String 
 		{
@@ -151,7 +189,7 @@ package view.elements
 		public function set title(value:String):void 
 		{
 			_title.text = value;
-			update();
+			onWidthSet();
 		}
 		
 		public function get textFromat():TextFormat 

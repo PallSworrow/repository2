@@ -3,6 +3,8 @@ package view.popups
 	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
 	import model.constants.InstrumentType;
+	import model.constants.SkillLevel;
+	import model.profiles.Skill;
 	import PS.model.dataProcessing.assetManager.ColorAsset;
 	import PS.model.dataProcessing.assetManager.Iasset;
 	import PS.model.popupSystem.Popup;
@@ -13,6 +15,7 @@ package view.popups
 	import PS.view.scroller.pages.EmptyPage;
 	import PS.view.textView.SimpleText;
 	import Swarrow.models.Globals;
+	import Swarrow.tools.dataObservers.ArrayObserver;
 	import view.factories.InstrumentIconFactory;
 	
 	/**
@@ -33,29 +36,33 @@ package view.popups
 		override public function show(parameters:Object = null):void 
 		{
 			super.show(parameters);
-			var currentList:Vector.<String> = parameters.list;
-			layout = new ListScroller(200, 400);
+			//handler = parameters.handler;
+			var observer:ArrayObserver = parameters.observer;
+			
+			var currentList:Vector.<String> = new Vector.<String>;
+			
+			for (var i:int = 0; i < observer.length; i++) 
+			{
+				currentList.push(observer.getItem(i).type);
+			}
+			
+			layout = new ListScroller(400, 400);
 			layout.itemProvider = itemProvider;
 			bg = new PsImage(asset);
-			handler = parameters.handler;
 			bg.x = (Globals.width - bg.width) / 2;
 			bg.y = (Globals.height - bg.height) / 2;
 			layout.x = (Globals.width - layout.width) / 2;
 			layout.y = (Globals.height - layout.height) / 2;
 			
+			
+			for (var j:int = 0; j < InstrumentType.list.length; j++) 
+			{
+				if (currentList.indexOf(InstrumentType.list[j]) == -1)
+				layout.addItem(InstrumentType.list[j]);
+			}
+			
 			addElement(layout);
 			
-			trace(this, 'current: ' + currentList);
-			trace(this, 'total: ' + InstrumentType.list);
-			for each(var type:String in InstrumentType.list) 
-			{
-					trace(this, 'show ' + type); 
-				if (currentList.indexOf(type) == -1)
-				{
-					layout.addItem(type);
-				}
-				
-			}
 			function itemProvider(data:Object):Ipage
 			{
 				var res:EmptyPage = new EmptyPage();
@@ -74,11 +81,12 @@ package view.popups
 				res.graphics.endFill();
 				return res;
 			}
-		}
-		private function onItemClick(type:String):void
-		{
-			handler(type);
-			close();
+			function onItemClick(type:String):void
+			{
+				//handler(type);
+				observer.push(new Skill(type));
+				close();
+			}
 		}
 		override public function close(parameters:Object = null):void 
 		{
