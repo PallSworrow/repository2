@@ -33,7 +33,7 @@ package view.elements.pageModules {
 		private var currValue:ArrayObserver;
 		private var _textFromat:TextFormat;
 		private var _editable:Boolean;
-		private var lastElemet:IviewElement;
+		private var lastElement:IviewElement;
 		public function  TagsModule(name:String, value:ArrayObserver, itemProvider:Object,addBtnProvider:IbuttonFactory, editable:Boolean ) 
 		{
 			super();
@@ -70,7 +70,7 @@ package view.elements.pageModules {
 			
 			
 			title = name;
-			if (editable) lastElemet = addBtn;
+			if (editable) lastElement = addBtn;
 			updateList();
 			
 			//currValue.addListener(
@@ -101,9 +101,9 @@ package view.elements.pageModules {
 				}
 			}
 			
-			if (lastElemet)
+			if (lastElement)
 			{
-				list.addElement(lastElemet);
+				list.addElement(lastElement);
 			}
 			list.update();
 		}
@@ -118,11 +118,12 @@ package view.elements.pageModules {
 		{
 			list.removeElement(addBtn);
 			list.addElement(inputTF);
-			lastElemet = inputTF;
+			list.update();
+			lastElement = inputTF;
 			
 			list.stage.focus = inputTF;
 			
-			inputTF.addEventListener(FocusEvent.FOCUS_OUT, cancel);
+			//inputTF.addEventListener(FocusEvent.FOCUS_OUT, cancel);
 			inputTF.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
 			
 			function keyDown(e:KeyboardEvent):void
@@ -131,13 +132,14 @@ package view.elements.pageModules {
 				{
 					if(inputTF.text != '')
 					{
-						list.removeElement(inputTF);
+						//list.removeElement(inputTF);
 						currValue.push(inputTF.text);
 						//list.addItem(createTag(inputTF.text));
 						inputTF.text = '';
 						//list.addElement(inputTF);
-						list.stage.focus = inputTF;
 						//list.update();
+						list.stage.focus = inputTF;
+						//
 					}
 					else
 					cancel();
@@ -149,7 +151,7 @@ package view.elements.pageModules {
 				
 				list.removeElement(inputTF);
 				list.addElement(addBtn);
-				lastElemet = addBtn;
+				lastElement = addBtn;
 				inputTF.text = '';
 				list.update();
 				
