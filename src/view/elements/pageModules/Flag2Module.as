@@ -29,11 +29,11 @@ package view.elements.pageModules {
 		private var valueTf:SimpleText;
 		private var btn:Ibtn;
 		private var cloud:CloudWindow;
-		public function Flag2Module(valueManager:IntegerObserver, name:String,btnProvider:IbuttonFactory, valueOptions:Vector.<String>,format:TextFormat) 
+		public function Flag2Module(valueManager:IntegerObserver, name:String,btnProvider:IbuttonFactory, valueOptions:Array,format:TextFormat) 
 		{
 			
 			vm = valueManager;
-			options = valueOptions;
+			options = Vector.<String>(valueOptions);
 			//create glif:
 			tf = SimpleTextFactory.inst.createText();
 			tf.autoSize = 'left';
@@ -47,7 +47,7 @@ package view.elements.pageModules {
 			valueTf.wordWrap = false;
 			valueTf.text = options[vm.currentValue];
 			
-			btn = btnProvider.createButton('ololo');
+			btn = btnProvider.createButton(name);
 			if (vm.currentValue > 0) btn.setPhaze(ButtonPhaze.ACTIVE);
 			
 			tf.x = btn.width;
@@ -64,7 +64,11 @@ package view.elements.pageModules {
 			cloud = new CloudWindow(list);
 			cloud.offsetY = btn.height;
 			
-			btn.setHandler(cloud.show);
+			btn.setHandler(function():void
+			{
+				if (editable)
+				cloud.show();
+			});
 			
 		}
 		

@@ -1,6 +1,7 @@
 package model.profiles 
 {
 	import flash.events.Event;
+	import model.constants.InstrumentType;
 	import model.constants.SkillLevel;
 	import model.profiles.interfaces.IskillProfile;
 	import Swarrow.tools.dataObservers.ArrayObserver;
@@ -12,9 +13,29 @@ package model.profiles
 	 */
 	public class Skill extends DataObserver
 	{
-		public function parse(item:Object):void
+		public function parse(item:String):void//String->xml->skill
 		{
-			type = item.type;
+			var inst:Skill = this;
+			var xml:XML = XML(item);
+			
+			type = xml.type;
+			level.currentValue = int(xml.level);
+			
+			parseList('tags');
+			parseList('videos');
+			parseList('audios');
+			
+			
+			function parseList(propName:String):void
+			{
+				for each (var item:XML in xml.child(propName).item) 
+				{
+					inst[propName].push(String(item));
+				}
+			}
+			
+			
+			//type = item.type;
 			/*var arr:Array = str.split('&');
 			var item:Object={};
 			for each(var prop:Object in arr)
@@ -27,24 +48,49 @@ package model.profiles
 			res.audio = Vector.<String>(item.audio.split('+'));
 			res.video = Vector.<String>(item.video.split('+'));*/
 			
-			for each(var prop:Object in item.tags)
+		/*	for each(var prop:Object in item.tags)
 			{
 				tags.push(String(prop));
 			}
 			for each(var track:Object in item.audio)
 			{
-				audio.push(String(track));
+				audios.push(String(track));
 			}
 			for each(var link:Object in item.video)
 			{
-				video.push(String(link));
+				videos.push(String(link));
 			}
-			level.currentValue = item.level;
+			level.currentValue = item.level;*/
 			
 		}
-		public function stringify():String
+		public function stringify():String//skill->xml->string
 		{
-			var res:String = '{';
+			var inst:Skill = this;
+			//var res:String;
+			var xml:XML = XML('<instrument></instrument>');
+			
+			xml.appendChild(XML('<type>'+type+'</type>'));
+			xml.appendChild(XML('<level>' + level.currentValue+'</level>'));
+			xml.appendChild(listToXml('tags'));
+			xml.appendChild(listToXml('videos'));
+			xml.appendChild(listToXml('audios'));
+			//xml.appendChild(listToXml('skills'));
+			
+			return xml.toXMLString();
+			function listToXml(propName:String):XML
+			{
+				var arr:ArrayObserver = inst[propName] as ArrayObserver;
+				if (!arr) throw new Error('array property not found: ' + propName);
+				var res:XML = XML('<' + propName+'></' + propName+'>');
+				var l:int = arr.length
+				for (var i:int = 0; i < l; i++) 
+				{
+					res.appendChild('<item>'+arr.getItem(i)+'</item>');
+				}
+				return res;
+			}
+			
+			/*var res:String = '{';
 			res += '"type":"' + type+'",';
 			res += '"tags":"['+arrToString(tags.currentValue) +'],';
 			res += '"audio":"['+arrToString(audio.currentValue)+'],';
@@ -60,7 +106,7 @@ package model.profiles
 				}
 				return String(arr);
 				
-			}
+			}*/
 			
 		}
 		/*public function toString():String
@@ -80,28 +126,28 @@ package model.profiles
 		public var type:String;
 		public var tags:ArrayObserver = new ArrayObserver();
 		public var level:IntegerObserver=new IntegerObserver(0);
-		public var audio:ArrayObserver = new ArrayObserver();
-		public var video:ArrayObserver = new ArrayObserver();
+		public var audios:ArrayObserver = new ArrayObserver();
+		public var videos:ArrayObserver = new ArrayObserver();
 
 		
-		public function Skill(skillTtype:String, data:Object=null) 
+		public function Skill(data:String) 
 		{
 			super(null);
-			type = skillTtype;
-			if (data) parse(data);
+			if (InstrumentType.validate(data)) type = data;
+			else if (data) parse(data);
 			
 			tags.addListener(callUpdate);
 			level.addListener(callUpdate);
-			audio.addListener(callUpdate);
-			video.addListener(callUpdate);
+			audios.addListener(callUpdate);
+			videos.addListener(callUpdate);
 			
 		}
 		public function dispose() 
 		{
 			tags.removeListener(callUpdate);
 			level.removeListener(callUpdate);
-			audio.removeListener(callUpdate);
-			video.removeListener(callUpdate);
+			audios.removeListener(callUpdate);
+			videos.removeListener(callUpdate);
 		}
 		private function callUpdate(e:Event=null):void
 		{

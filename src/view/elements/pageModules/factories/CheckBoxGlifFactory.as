@@ -11,10 +11,10 @@ package view.elements.pageModules.factories
 	 * ...
 	 * @author pall
 	 */
-	public class CheckBoxFactory extends GlifFactory 
+	public class CheckBoxGlifFactory extends GlifFactory 
 	{
 		
-		public function CheckBoxFactory(params:Object=null) 
+		public function CheckBoxGlifFactory(params:Object=null) 
 		{
 			super(params);
 			
@@ -35,15 +35,21 @@ package view.elements.pageModules.factories
 				data.factory, 
 				data.options,
 				format);
+				alt.editable = Boolean(data.editable);
+				return alt;
 			}
-			else
+			else if(data.manager is BooleanObserver)
 			{
 				res = new FlagModule(data.manager as BooleanObserver,
 				data.factory,
 				String(data.name),
 				format);
+				res.editable = Boolean(data.editable);
+				return res;
 			}
-			return res;
+			
+			throw new Error('invalid manager: ' + data.manager);
+			return null;
 		}
 	}
 

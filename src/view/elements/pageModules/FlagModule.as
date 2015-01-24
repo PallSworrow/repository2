@@ -23,6 +23,7 @@ package view.elements.pageModules {
 		private var _editable:Boolean;
 		public function FlagModule(valueManager:BooleanObserver,btnProvider:Object,name:String, format:TextFormat) 
 		{
+			if (!valueManager) throw new Error('value manager not found');
 			if (btnProvider is IbuttonFactory) btn = btnProvider.createButton(name);
 			if (btnProvider is Function) btn = btnProvider(name);
 			vm = valueManager;

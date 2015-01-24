@@ -7,14 +7,20 @@ package Swarrow.tools.dataObservers {
 	 */
 	public class ArrayObserver extends DataObserver implements IdataObserver
 	{
-		
+		private var _itemFilter:Function;
 		private var _prevValue:Array;
-		public function ArrayObserver(value:Array=null) 
+		public function ArrayObserver(value:Array=null, filter:Function=null) 
 		{
-		
+			if (filter is Function) _itemFilter = filter;
+			
 			if (!value) value = [];
 			super(value);
 			updateSubListeners();
+		}
+		private function itemFilter(input:Object):Object
+		{
+			if (_itemFilter) return _itemFilter(input);
+			return input;
 		}
 		override public function bindTo(getterFunc:Function, setterFunc:Function = null, observer:DataObserver = null):void 
 		{
@@ -72,6 +78,13 @@ package Swarrow.tools.dataObservers {
 		}
 		public function set currentValue(value:Array):void 
 		{
+			if (_itemFilter)
+			{
+				for (var i:int = 0; i < value.length; i++) 
+				{
+					value[i] = itemFilter[i];
+				}
+			}
 			removeSubListeners();
 			_prevValue = _currentValue;
 			_currentValue = value;
@@ -81,6 +94,8 @@ package Swarrow.tools.dataObservers {
 		}
 		public function push(item:Object):void
 		{
+			//trace(this, 'push:', item);
+			item = itemFilter(item);
 			_prevValue = currentValue;
 			_currentValue.push(item);
 			update();
@@ -89,6 +104,7 @@ package Swarrow.tools.dataObservers {
 		}
 		public function unshift(item:Object):void
 		{
+			item = itemFilter(item);
 			_prevValue = currentValue;
 			_currentValue.unshift(item);
 			update();
@@ -123,9 +139,12 @@ package Swarrow.tools.dataObservers {
 			return _prevValue.slice();
 		}
 		
+		
+		
 		public function splice(from:int, length:int=1):void
 		{
 			_prevValue = currentValue;
+			if (length < 0) length = this.length;
 			for (var i:int = 0; i < length;i++ ) 
 			{
 				stopListeningItem(_currentValue[i+from]);

@@ -71,9 +71,9 @@ package view.elements.pageModules {
 			{
 				video = new Dictionary();
 				videoLayout.clear();
-				for (var k:int = 0; k < skill.video.length; k++) 
+				for (var k:int = 0; k < skill.videos.length; k++) 
 				{
-					val = String(skill.video.getItem(k));
+					val = String(skill.videos.getItem(k));
 					element = createNewVideo(val);
 					video[val]=element;
 					videoLayout.addElement(element);
@@ -105,9 +105,9 @@ package view.elements.pageModules {
 			{
 				audio = new Dictionary();
 				audioLayout.clear();
-				for (var k:int = 0; k < skill.audio.length; k++) 
+				for (var k:int = 0; k < skill.audios.length; k++) 
 				{
-					val = String(skill.audio.getItem(k));
+					val = String(skill.audios.getItem(k));
 					element = createNewAudio(val);
 					audio[val]=element;
 					audioLayout.addElement(element);

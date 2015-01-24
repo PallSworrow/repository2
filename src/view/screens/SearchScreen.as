@@ -102,15 +102,17 @@ package view.screens
 		private function onSearchBtn():void 
 		{
 			clear();
+			var temp:String = panel.getCurrentReq();
 			loader.addEventListener(Event.COMPLETE, loader_complete);
 			var req:URLRequest = new URLRequest('http://allmusiciants.freevar.com/userSearch.php?');
 			var vars:URLVariables = new URLVariables();
 			vars['user_id'] = Data.viewerId;
-			vars['request'] = panel.getCurrentReq();
+			vars['request'] = temp;
 			req.data = vars;
 			req.method = URLRequestMethod.POST;
 			loader.load(req);
-			
+			//trace(this, 'SEARCH');
+			//trace(temp);
 			
 		}
 		override public function clear():void 

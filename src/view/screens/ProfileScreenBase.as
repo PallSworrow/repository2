@@ -130,7 +130,6 @@ package view.screens
 				element.addEventListener(GlifEvent.HEIGHT_CHANGE, element_change);
 				scroller.addItem(element);
 				
-				;
 				
 			}
 			scroller.update()

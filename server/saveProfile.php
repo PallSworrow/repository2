@@ -1,5 +1,5 @@
 <?php
-include 'functions.php'; 
+	include 'functions.php'; 
 	$db_host="localhost"; // ???±N‹N‡???? ???µ ??N??¶???? ???·???µ??N?N‚N? 
 	$db_user="785258"; // ????N? ?????»N??·?????°N‚?µ?»N? ?‘?” 
 	$db_password="lasttonightfy"; // ???°Nˆ???»N? ?‘?” 
@@ -23,7 +23,11 @@ include 'functions.php';
 	// $prof = json_decode($prof);
 	
 	$props = array();
-	array_push($props,"city = '".$p['city']."'");
+	foreach ($p as $key => $value)
+	{
+		array_push($props," ".$key." ='".$value."'"); 
+	}
+/* 	array_push($props,"city = '".$p['city']."'");
 	array_push($props,"cityChangeReady = '".$p['cityChangeReady']."'");
 	array_push($props,"countryChangeReady = '".$p['countryChangeReady']."'");
 	// array_push($props,"getInstrumentTypes = '".$p['getInstrumentTypes']."'");
@@ -46,7 +50,7 @@ include 'functions.php';
 	array_push($props,"worldTours = '".$p['worldTours']."'");
 	array_push($props,"worldToursReady = '".$p['worldToursReady']."'");
 	array_push($props,"writeExperience = '".$p['writeExperience']."'");
-	
+	 */
 	
 	/* $prof = array(
             'English' => array(

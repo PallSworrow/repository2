@@ -36,6 +36,10 @@ package model.constants
 			}
 			return names;
 		}
+		public static function validate(value:String):Boolean
+		{
+			return list.indexOf(value) >= 0;
+		}
 	}
 
 }

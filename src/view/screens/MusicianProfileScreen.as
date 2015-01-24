@@ -1,8 +1,11 @@
 package view.screens 
 {
+	import flash.events.Event;
 	import flash.geom.Rectangle;
+	import flash.text.Font;
 	import flash.text.TextFormat;
 	import flash.utils.Dictionary;
+	import model.connection.ServerConnection;
 	import model.constants.AMDMpopup;
 	import model.constants.InstrumentType;
 	import model.constants.SkillLevel;
@@ -24,13 +27,14 @@ package view.screens
 	import Swarrow.tools.dataObservers.RectangleObserver;
 	import Swarrow.view.glifs.TableMaker;
 	import view.constants.Fonts;
-	import view.elements.pageModules.factories.CheckBoxFactory;
+	import view.elements.pageModules.factories.CheckBoxGlifFactory;
 	import view.elements.pageModules.factories.IntrumentsModuleFactory;
 	import view.elements.pageModules.factories.PhotosFactory;
 	import view.elements.pageModules.factories.TagModuleFactory;
 	import view.elements.pageModules.factories.TextModuleFactory;
 	import view.elements.pageModules.PortfolioViewer;
 	import view.elements.pageModules.TagsModule;
+	import view.factories.btns.CheckBoxFactory;
 	import view.factories.btns.HardCodeBtnFactory;
 	import view.factories.btns.TagFactory;
 	import view.factories.InstrumentIconFactory;
@@ -45,7 +49,7 @@ package view.screens
 		protected var _editable:Boolean;
 		protected var textModuleProvider:TextModuleFactory;
 		protected var photoModuleProvider:PhotosFactory;
-		protected var checkBoxProvider:CheckBoxFactory;
+		protected var checkBoxProvider:CheckBoxGlifFactory;
 		protected var tagsModelProvider:TagModuleFactory;
 		public function MusicianProfileScreen(allowBack:Boolean = false) 
 		{
@@ -53,7 +57,7 @@ package view.screens
 			_editable = false;
 			textModuleProvider = new TextModuleFactory( { maxChars:30, provider:createSingLineText } );
 			photoModuleProvider = new PhotosFactory();
-			checkBoxProvider = new CheckBoxFactory();
+			checkBoxProvider = new CheckBoxGlifFactory({font:Fonts.SIMPLE,factory:new CheckBoxFactory()});
 			tagsModelProvider = new TagModuleFactory();
 		}
 		protected var profile:MusicianProfile;
@@ -64,7 +68,7 @@ package view.screens
 			
 			editable = (profile.id == Data.viewerProfile.id);
 			var columns:Array = ['60%',{paddingLeft:'5%',width:'35%'}]
-			
+			if(editable) profile.addEventListener(Event.CHANGE, profile_change);
 			var res:Array = 
 			[
 				{type:TableMaker.COLUMNS, //HEAD
@@ -144,6 +148,21 @@ package view.screens
 								{type:TableMaker.GLIF,
 									params:{editable:editable,manager:profile.instruments},
 									provider:new IntrumentsModuleFactory()
+								},
+								{type:TableMaker.GLIF,
+									params:{manager:profile.localTours, name: 'Местные туры', editable:editable},
+									provider:checkBoxProvider
+								}
+								,
+								{type:TableMaker.GLIF,
+									params: { manager:profile.stageExperience, name: 'Опыт выступлений', editable:editable,
+									options:['хер с горы','номана','збс']},
+									provider:checkBoxProvider
+								},
+								{type:TableMaker.GLIF,
+									params: { manager:profile.writeExperience, name: 'Опыт записи', editable:editable,
+									options:['хер с горы','номана','збс']},
+									provider:checkBoxProvider
 								}
 							]
 						}
@@ -151,6 +170,12 @@ package view.screens
 				}
 			];
 			return res;
+		}
+		
+		private function profile_change(e:Event):void 
+		{
+			trace('PROFILE CHANGE');
+			ServerConnection.saveProfile(e.target as MusicianProfile,function(e:Event){});
 		}
 		private function createInstrument(list:Vector.<String>, handler:Function):void
 		{

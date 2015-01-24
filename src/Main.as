@@ -9,6 +9,8 @@ package
 	import model.Hierarchy;
 	import PS.model.dataProcessing.assetManager.ColorAsset;
 	import PS.model.PsImage;
+	import PS.view.clouds.CloudWindow;
+	import PS.view.clouds.CloudWindowLayers;
 	import Swarrow.models.Globals;
 	import Swarrow.models.screenManager.implts.ScreenManager;
 	import Swarrow.models.screenManager.interfaces.InavigationFilter;
@@ -44,6 +46,8 @@ package
 		private function onInited():void 
 		{
 			trace(this, 'IINITED');
+			CloudWindowLayers.defaultCloudsStage = stage;
+			CloudWindowLayers.addLayer('Clouds', stage);
 			navigatePanel = new NavigationPanel();
 			addChild(navigatePanel);
 			//new VectorDispatcher();

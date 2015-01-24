@@ -30,25 +30,25 @@ $db_host="localhost"; // обычно не нужно изменять
 			array_push($cities, '"'.$row['city'].'"');
 		}
 	//goals:	
-		$arr = explode(',',$row['goals']);
+		$arr = explode(', ',$row['goals']);
 		foreach($arr as $item)
 		{
 			if(array_search($item,$goals) == false && $item != '' && $item != '""') array_push($goals, ''.$item.'');
 		}
 	//styles:
-		$arr = explode(',',$row['styles']);
+		$arr = explode(', ',$row['styles']);
 		foreach($arr as $item)
 		{
 			if(array_search($item,$styles) == false && $item != '') array_push($styles, ''.$item.'');
 		}
 	//instruments
-		$arr = explode(';',$row['instruments']);
+		$arr = explode(', ',$row['instruments']);
 		foreach($arr as $item)
 		{
-			$skill = json_decode($item);
+			$skill = simplexml_load_string($item);
 			foreach($skill->tags as $tag)
 			{
-			//inst tags:
+				//inst tags:
 				if(array_search($tag,$instTags) == false && $tag != '') array_push($instTags, '"'.$tag.'"');
 			
 			}
