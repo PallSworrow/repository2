@@ -28,17 +28,54 @@ function stringify($row)
 		return $res;
 
 }
-function generetaeValueTemplate($flagNames, $temp)//:array [flag = 1|0]
+function generateValueTemplate($flagNames, $temp)//:array [flag = 1|0]
 {
-
+	$res = array();
+	$value;
+	echo '<<generateValueTemplate: names: ['.$flagNames.']  temp: ['.$temp.'] >>';
+	foreach($flagNames as $name)
+	{
+		$value = $temp[$name];
+		echo '  <<GVT '.$name.' = '.$value.'>>  ';
+		if(($value && $value !='false'))
+		{
+			echo 'INCLUDE';
+			if($value == 'true')$value = 1;
+			array_push($res,'`'.$name.'`="'.$value.'"');
+		}
+	}
+	return $res;
 }
 function checkListParams($row,$temp,$names)//:1|0
 {
-
+	$listValue;
+	$fullMatch;//G
+	$crossing;//Y
+	$except;//R
+	
+	$res = 1;
+	foreach($names as $name)
+	{
+		$listValue = explode(', ',$row[$name]);
+		// echo 'TEMP: '.$temp;
+		// echo '<<name: '.$name.'  value = ['.$listValue.'] G = ['.$temp[$name.'G'].'] Y = ['.$temp[$name.'Y'].'] R = ['.$temp[$name.'Y'].']  >>';
+		$fullMatch = checkListFullMatch($listValue,$temp[$name.'G']);
+		$crossing = checkListCrossing($listValue,$temp[$name.'Y']);
+		$except = checkException($listValue,$temp[$name.'R']);
+		echo'<<LIST CHECK '.$name.':['.$fullMatch.','.$crossing.','.$except.']>>';
+		if($fullMatch + $crossing + $except <3)
+		{
+			echo ' -> false!   ';
+			$res = 0;
+		}			
+	}
+	
+	return $res;
 }
 
 function checkListFullMatch($listDB, $listTemp)
 {
+	if(!$listTemp) return 1;
 	if(count($listTemp) == 0) return 1;
 	$c = count(array_intersect($listDB, $listTemp));
 	if($c >= count($listTemp)) return 1;
@@ -47,6 +84,7 @@ function checkListFullMatch($listDB, $listTemp)
 }
 function checkListCrossing($listDB, $listTemp)
 {
+	if(!$listTemp) return 1;
 	if(count($listTemp) == 0) return 1;
 	$c = count(array_intersect($listDB, $listTemp));
 	if($c > 0) return 1;
@@ -54,6 +92,7 @@ function checkListCrossing($listDB, $listTemp)
 }
 function checkException($listDB, $listTemp)
 {
+	if(!$listTemp) return 1;
 	if(count($listTemp) == 0) return 1;
 	$c = count(array_intersect($listDB, $listTemp));
 	if($c > 0) return 0;
@@ -62,10 +101,10 @@ function checkException($listDB, $listTemp)
 function checkSkill($skillList, $temp)//:1|0   skill list - array(skill,skill...)
 {
 	
-	echo '<$temp->type '.$temp->instrumentType.'>';
+	// echo '<$temp->type '.$temp->instrumentType.'>';
 	foreach($skillList as $skill)
 	{
-		$skill = json_decode($skill);
+		$skill = simplexml_load_string($skill);
 		echo '$skill->type:'.$skill->type;
 		
 		if($skill->type == $temp->instrumentType)
@@ -76,7 +115,7 @@ function checkSkill($skillList, $temp)//:1|0   skill list - array(skill,skill...
 					checkListCrossing($skill->tags, $temp->instrumentTagsY) &&
 					checkException($skill->tags, $temp->instrumentTagsR) &&
 					(
-						$temp->skillLevel[0]==0 || 
+						$temp->skillLevel==0 || 
 						$skill->level == $temp->skillLevel
 					) &&
 					(

@@ -112,7 +112,7 @@ package view.screens
 			req.method = URLRequestMethod.POST;
 			loader.load(req);
 			//trace(this, 'SEARCH');
-			//trace(temp);
+			trace(temp);
 			
 		}
 		override public function clear():void 
@@ -123,7 +123,10 @@ package view.screens
 		private function loader_complete(e:Event):void 
 		{
 			loader.removeEventListener(Event.COMPLETE, loader_complete);
+			trace(this, 'SERVER ANSWER');
+			//trace(String(e.target.data));
 			var searchResult:Array = (e.target.data as String).split('====');
+			trace(searchResult[0]);
 			searchResult = (searchResult[1] as String).split('&&');
 			for each (var obj:Object in searchResult) 
 			{

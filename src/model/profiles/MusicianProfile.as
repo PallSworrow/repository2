@@ -32,7 +32,7 @@ package model.profiles
 			function check(name:String, type:Class, value:Object):void
 			{
 				if (!obj[name]) return;
-				trace(name, obj[name]);
+				//trace(name, obj[name]);
 				var arr:Array;
 				switch(type)
 				{
@@ -158,18 +158,17 @@ package model.profiles
 			}*/
 		}
 		
+		//main:
 		public var id:String;
 		public var name:StringObserver=new StringObserver();
 		public var city:StringObserver = new StringObserver();
+		public var info:StringObserver = new StringObserver();
+		public var photos:ArrayObserver = new ArrayObserver();
+		//values:
 		public var searchForMusician:BooleanObserver = new BooleanObserver(false);
 		public var searchForGroup:BooleanObserver = new BooleanObserver(false);
 		public var userSearchReq:ArrayObserver = new ArrayObserver();
 		public var groupSearchReqs:ArrayObserver = new ArrayObserver();
-		public var photos:ArrayObserver = new ArrayObserver();
-		public var styles:ArrayObserver = new ArrayObserver();
-		public var goals:ArrayObserver = new ArrayObserver();
-		public var info:StringObserver = new StringObserver();
-		public var instruments:ArrayObserver = new ArrayObserver(null,instrumentsItemFilter); 
 		public var stageExperience:IntegerObserver = new IntegerObserver(0);
 		public var writeExperience:IntegerObserver = new IntegerObserver(0);
 		public var localTours:BooleanObserver = new BooleanObserver(false);
@@ -179,9 +178,15 @@ package model.profiles
 		public var cityChangeReady:BooleanObserver = new BooleanObserver(false);
 		public var countryChangeReady:BooleanObserver = new BooleanObserver(false);
 		public var passport:BooleanObserver = new BooleanObserver(false);
+		public var forFree:BooleanObserver = new BooleanObserver(true);
+		//lists:
+		public var styles:ArrayObserver = new ArrayObserver();
+		public var goals:ArrayObserver = new ArrayObserver();
+		public var instruments:ArrayObserver = new ArrayObserver(null,instrumentsItemFilter); 
 		
 		
-		public var isMusician:BooleanObserver=new BooleanObserver(false);
+		
+		//public var isMusician:BooleanObserver=new BooleanObserver(false);
 		
 		public function MusicianProfile(data:String = null ) 
 		{

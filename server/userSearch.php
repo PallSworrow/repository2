@@ -14,20 +14,23 @@
 	 // echo '   '.$template.'   ';
 	
 	
-	$template = json_decode($template);
+	$template = json_decode($template,true);
+	 // echo 'DECODED   '.$template->isForFree.'   ';
 	//single value params names
-	$ValueParamNames = array('city','');
+	$ValueParamNames = array('stageExpirience','writeExpirience','localTours','worldTours','localToursReady','worldToursReady','cityChangeReady','passport','searchForMusician','searchForGoup','forFree');
 	//list params names
-	$ListParamNames =array();
+	$ListParamNames =array('city','learnings','styles','goals');
 	
 	mysql_connect($db_host, $db_user, $db_password) or die (mysql_error()); 
 	mysql_select_db($db_name) or die (mysql_error()); 
 	mysql_query("SET NAMES 'utf8'"); 
 	
-	$req = implode(' && ',generateValueTemplate($names,$ValueParamNames);
+	$req = generateValueTemplate($ValueParamNames,$template);
+	echo '  [GVT result: '.$req.' '.count($req).' ]  ';
+	$req = implode(' && ',$req);
 	if(strlen($req) >0) $query = 'SELECT * FROM `users` where  '.$req.';';
 	else $query = 'SELECT * FROM `users`;';
-	echo $query.'   ';
+	echo $query.'  \n ';
 	$sql = mysql_query($query);
 
 	
@@ -36,13 +39,16 @@
 
 	while($row = mysql_fetch_array($sql))
 	{
-		
-		if(checkListParams($row,$template,$ListParamNames)==1)
+		// echo'TEMPLATE: '.$template;
+		$listCheck = checkListParams($row,$template,$ListParamNames);
+		// echo 'LIST CHECK RES: '.$listCheck;
+		if($listCheck==1)
 		{
+			// echo'  <<LISTS CHECK = true>> ';
 			if($template->instrumentType!=''&& false)
 			{	
 				//instruments: [skill,skill,skill]			
-				if(checkSkill(explode(';',$row['instruments']),$template) === 1 )
+				if(checkSkill(explode(', ',$row['instruments']),$template) === 1 )
 				{
 					$result[] = stringify($row);
 				}
@@ -51,6 +57,10 @@
 			{
 				 $result[] = stringify($row);
 			}
+		}
+		else
+		{
+			// echo'  <<LISTS CHECK = false>> ';
 		}
 	} 
 	
