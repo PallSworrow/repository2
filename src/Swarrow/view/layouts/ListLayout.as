@@ -37,6 +37,7 @@ package Swarrow.view.layouts
 		override protected function onGlifHeightChange(e:GlifEvent):void 
 		{
 			//callUpdate(getChildIndex(e.target as DisplayObject));
+			trace(this, 'onGlifHeightChange');
 			if (childUpdateHandlerFlag);
 			callUpdate();
 		}
@@ -45,8 +46,8 @@ package Swarrow.view.layouts
 		{
 			var border:int=width;
 			var item:DisplayObject;
-			var horizontalInterval:int = 0;
-			var verticalInterval:int = 0;
+			var horizontalInterval:int = intervalX;
+			var verticalInterval:int = intervalY;
 			
 			var offsetX:int = 0;
 			var offsetY:int = 0;

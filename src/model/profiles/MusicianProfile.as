@@ -27,6 +27,8 @@ package model.profiles
 		public function parse(str:String):void
 		{
 			var obj:Object = JSON.parse(str);
+			id = obj.id;
+			if (!id) throw new Error('id was not Defined');
 			TypeDescriptor.iterateVars(this, DataObserver, check);
 			
 			function check(name:String, type:Class, value:Object):void
@@ -40,7 +42,7 @@ package model.profiles
 						value.currentValue = Number(obj[name]);
 						break;
 					case BooleanObserver:
-						value.currentValue = Boolean(obj[name]);
+						value.currentValue = Boolean(int(obj[name]));
 						break;
 					case StringObserver:
 						value.currentValue = String(obj[name]);
@@ -166,9 +168,7 @@ package model.profiles
 		public var photos:ArrayObserver = new ArrayObserver();
 		//values:
 		public var searchForMusician:BooleanObserver = new BooleanObserver(false);
-		public var searchForGroup:BooleanObserver = new BooleanObserver(false);
-		public var userSearchReq:ArrayObserver = new ArrayObserver();
-		public var groupSearchReqs:ArrayObserver = new ArrayObserver();
+		public var searchForGroup:BooleanObserver = new BooleanObserver(false);;
 		public var stageExperience:IntegerObserver = new IntegerObserver(0);
 		public var writeExperience:IntegerObserver = new IntegerObserver(0);
 		public var localTours:BooleanObserver = new BooleanObserver(false);
@@ -183,6 +183,8 @@ package model.profiles
 		public var styles:ArrayObserver = new ArrayObserver();
 		public var goals:ArrayObserver = new ArrayObserver();
 		public var instruments:ArrayObserver = new ArrayObserver(null,instrumentsItemFilter); 
+		//public var userSearchReq:ArrayObserver = new ArrayObserver();
+		//public var groupSearchReqs:ArrayObserver = new ArrayObserver()
 		
 		
 		
@@ -192,6 +194,8 @@ package model.profiles
 		{
 			
 			super();
+			trace(this, 'CREATE');
+			trace(data);
 			if(data) 
 			parse(data);
 			//trace(describeType(this));

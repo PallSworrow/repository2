@@ -3,8 +3,12 @@
 function stringify($row)
 {
 		$res  = json_encode($row);
-		$arr = array();
-		// foreach($row as $key->$value)
+		/* $arr = array();
+		foreach(array()$row as $key->$value)
+		{
+			array_push($arr,'"'.$key.'":"'.$value.'"');
+		}
+		$res = '{'.implode(', ',$arr).'}'; */
 		/* $res = '{';
 		$res = $res.'"id":"'.$row['id'].'",';
 		$res = $res.'"city":"'.$row['city'].'",';
@@ -107,13 +111,13 @@ function checkSkill($skillList, $temp)//:1|0   skill list - array(skill,skill...
 		$skill = simplexml_load_string($skill);
 		echo '$skill->type:'.$skill->type;
 		
-		if($skill->type == $temp->instrumentType)
+		if($skill->type == $temp['instrumentType'])
 		{
-		echo '->check';
+			echo '->check';
 			if( 
-					checkListFullMatch($skill->tags, $temp->instrumentTagsG) &&
-					checkListCrossing($skill->tags, $temp->instrumentTagsY) &&
-					checkException($skill->tags, $temp->instrumentTagsR) &&
+					checkListFullMatch($skill->tags->item, $temp->instrumentTagsG) &&
+					checkListCrossing($skill->tags->item, $temp->instrumentTagsY) &&
+					checkException($skill->tags->item, $temp->instrumentTagsR) &&
 					(
 						$temp->skillLevel==0 || 
 						$skill->level == $temp->skillLevel

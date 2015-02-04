@@ -64,6 +64,7 @@ package view.elements.pageModules {
 		private function onConfirm():void
 		{
 			tf.type = TextFieldType.DYNAMIC;
+			tf.border = false;
 			addElement(editBtn);
 			cancelBtn.remove();
 			confirmBtn.remove();
@@ -76,6 +77,7 @@ package view.elements.pageModules {
 		private function onCancel():void
 		{
 			tf.type = TextFieldType.DYNAMIC;
+			tf.border = false
 			addElement(editBtn);
 			cancelBtn.remove();
 			confirmBtn.remove();
@@ -86,6 +88,7 @@ package view.elements.pageModules {
 		private function onEdit():void
 		{
 			tf.type = TextFieldType.INPUT;
+			tf.border = true;
 			editBtn.remove();
 			addElement(cancelBtn);
 			addElement(confirmBtn);

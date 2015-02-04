@@ -1,6 +1,7 @@
 package view.screens 
 {
 	import adobe.utils.CustomActions;
+	import com.junkbyte.console.Cc;
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -120,9 +121,13 @@ package view.screens
 			if (data) clear();
 			else return;
 			
+			Cc.ch(this,' LOAD DATA \n' + JSON.stringify(data));
+			
+			
 			var items:Array = read(data);
 			var element:IviewElement;
-			trace('layout length: ' + items.length);
+			Cc.ch(this, 'data length: ' + items.length);
+			try{
 			for each (var item:Object in items) 
 			{
 				element = render(item);
@@ -132,7 +137,15 @@ package view.screens
 				
 				
 			}
+			}
+			catch (e:Error)
+			{
+				Cc.ch(this, 'RENDERING ERROR: ' +e);
+				Cc.ch(this,e.message);
+				Cc.ch(this, e.getStackTrace);
+			}
 			scroller.update()
+			Cc.ch(this,'scroller length: ' + scroller.getNumpages());
 			sb.proportion = scroller.getProportion();
 		}
 		

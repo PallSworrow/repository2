@@ -15,6 +15,9 @@ package Swarrow.view.layouts
 		
 		public var autoUpdate:Boolean = true;
 		public var ignorNonGlifs:Boolean = true;
+		
+		private var _intervalX:int = 10;
+		private var _intervalY:int = 10;
 		public function LayoutBase() 
 		{
 			super();
@@ -113,6 +116,26 @@ package Swarrow.view.layouts
 		protected function onGlifHeightChange(e:GlifEvent):void
 		{
 			
+		}
+		
+		public function get intervalX():int 
+		{
+			return _intervalX;
+		}
+		
+		public function set intervalX(value:int):void 
+		{
+			_intervalX = value;
+		}
+		
+		public function get intervalY():int 
+		{
+			return _intervalY;
+		}
+		
+		public function set intervalY(value:int):void 
+		{
+			_intervalY = value;
 		}
 		
 	}

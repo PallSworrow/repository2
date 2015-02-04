@@ -16,7 +16,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'24.01.2015'</value>
+      <value>'04.02.2015'</value>
     </define>
     <define append="true">
       <name>CONFIG::air</name>
@@ -35,6 +35,9 @@
       <path-element>D:\pasha\github\repository2\src</path-element>
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
+    <library-path append="true">
+      <path-element>D:\pasha\github\repository2\src\lib\Console2.6+asdoc.swc</path-element>
+    </library-path>
   </compiler>
   <file-specs>
     <path-element>D:\pasha\github\repository2\src\Main.as</path-element>

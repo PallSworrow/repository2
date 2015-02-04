@@ -3,6 +3,7 @@ package model.profiles
 	import flash.events.Event;
 	import model.constants.InstrumentType;
 	import model.constants.SkillLevel;
+	import model.profiles.interfaces.Iparsable;
 	import model.profiles.interfaces.IskillProfile;
 	import Swarrow.tools.dataObservers.ArrayObserver;
 	import Swarrow.tools.dataObservers.DataObserver;
@@ -11,9 +12,9 @@ package model.profiles
 	 * ...
 	 * @author 
 	 */
-	public class Skill extends DataObserver
+	public class Skill extends DataObserver implements Iparsable
 	{
-		public function parse(item:String):void//String->xml->skill
+		public function parse(item:Object):void//String->xml->skill
 		{
 			var inst:Skill = this;
 			var xml:XML = XML(item);
@@ -75,7 +76,8 @@ package model.profiles
 			xml.appendChild(listToXml('videos'));
 			xml.appendChild(listToXml('audios'));
 			//xml.appendChild(listToXml('skills'));
-			
+			trace('PACKED SKILL: ');
+			trace(xml.toXMLString());
 			return xml.toXMLString();
 			function listToXml(propName:String):XML
 			{
@@ -85,7 +87,7 @@ package model.profiles
 				var l:int = arr.length
 				for (var i:int = 0; i < l; i++) 
 				{
-					res.appendChild('<item>'+arr.getItem(i)+'</item>');
+					res.appendChild(XML('<item>'+String(arr.getItem(i))+'</item>'));
 				}
 				return res;
 			}

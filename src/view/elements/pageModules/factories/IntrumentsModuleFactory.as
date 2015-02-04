@@ -1,5 +1,6 @@
 package view.elements.pageModules.factories 
 {
+	import flash.display.DisplayObject;
 	import model.constants.InstrumentTags;
 	import model.profiles.Skill;
 	import PS.model.interfaces.IviewElement;
@@ -10,6 +11,7 @@ package view.elements.pageModules.factories
 	import Swarrow.tools.dataObservers.ArrayObserver;
 	import Swarrow.view.glifs.IglifFactory;
 	import view.elements.pageModules.ElementsModule;
+	import view.factories.btns.HardCodeBtnFactory;
 	import view.factories.InstrumentIconFactory;
 	import view.popups.AddInstrumentPopup;
 	/**
@@ -29,7 +31,7 @@ package view.elements.pageModules.factories
 		{
 			popup = new AddInstrumentPopup();
 			itemFactory = new InstrumentIconFactory();
-			btnFactory = DefaultButtonFactory.inst;
+			btnFactory = HardCodeBtnFactory.inst;
 		}
 		
 		/* INTERFACE Swarrow.view.glifs.IglifFactory */
@@ -50,6 +52,7 @@ package view.elements.pageModules.factories
 		{
 			var res:Ibtn = itemFactory.createButton(data);
 			res.setHandler(onItemTap, data);
+			(res as DisplayObject).width = (res as DisplayObject).height = 50;
 			return res;
 		}
 		

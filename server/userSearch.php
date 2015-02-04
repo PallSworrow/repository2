@@ -14,7 +14,9 @@
 	 // echo '   '.$template.'   ';
 	
 	
+	echo '<< REQ: '.$template.'>>>>';
 	$template = json_decode($template,true);
+	echo '<< INSTRUMENT TYPE: '.(string)$template['instrumentType'].'>>>>';
 	 // echo 'DECODED   '.$template->isForFree.'   ';
 	//single value params names
 	$ValueParamNames = array('stageExpirience','writeExpirience','localTours','worldTours','localToursReady','worldToursReady','cityChangeReady','passport','searchForMusician','searchForGoup','forFree');
@@ -45,7 +47,7 @@
 		if($listCheck==1)
 		{
 			// echo'  <<LISTS CHECK = true>> ';
-			if($template->instrumentType!=''&& false)
+			if($template['instrumentType']!=''&& $template['instrumentType'])
 			{	
 				//instruments: [skill,skill,skill]			
 				if(checkSkill(explode(', ',$row['instruments']),$template) === 1 )

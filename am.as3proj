@@ -52,7 +52,7 @@
   </includeLibraries>
   <!-- SWC Libraries -->
   <libraryPaths>
-    <!-- example: <element path="..." /> -->
+    <element path="src\lib\Console2.6+asdoc.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>

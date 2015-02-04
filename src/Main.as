@@ -1,12 +1,15 @@
 package 
 {
 	import com.jac.mouse.MouseWheelEnabler;
+	import com.junkbyte.console.Cc;
 	import com.spikything.utils.MouseWheelTrap;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 	import model.AMini;
 	import model.Hierarchy;
+	import popupManager.Popup;
+	import popupManager.PopupEngine;
 	import PS.model.dataProcessing.assetManager.ColorAsset;
 	import PS.model.PsImage;
 	import PS.view.clouds.CloudWindow;
@@ -31,13 +34,19 @@ package
 		}
 		public function Main():void 
 		{
+			
+			Cc.config.style.backgroundAlpha = 1;
+			Cc.startOnStage(this, "`"); // "`" - change for password. This will start hidden
+			Cc.visible = true; // Show console, because having password hides console.
 			addEventListener(Event.ADDED_TO_STAGE, addedToStage);
+			
 		}
 		
 		private function addedToStage(e:Event):void 
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, addedToStage);
 			var ini:AMini = new AMini(800, 600, stage);
+			
 			//MouseWheelEnabler.init(stage);
 			MouseWheelTrap.setup(stage);
 			ini.init(onInited,'http://allmusiciants.freevar.com/getSearchData.php?');

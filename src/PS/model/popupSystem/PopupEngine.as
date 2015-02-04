@@ -3,7 +3,7 @@ package PS.model.popupSystem {
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Shape;
 	import flash.events.Event;
-	import PS.model.Globals;
+	import Swarrow.models.Globals;
 	/**
 	 * ...
 	 * @author 
@@ -21,13 +21,16 @@ package PS.model.popupSystem {
 		//fogging:
 		private static function createFog():void
 		{
+			
 			if (!fog)
 			{
+				//trace('GLOBALS', Globals.width, Globals.height);
 				fog = new Shape();
 				fog.graphics.beginFill(FogColor, FogAlpha);
-				fog.graphics.drawRect(0, 0, Globals.Width, Globals.Height);
+				fog.graphics.drawRect(0, 0, Globals.width, Globals.height);
 				fog.graphics.endFill();
 				container.addChild(fog);
+				//trace('CREATE POPUP FOG',FogColor,FogAlpha,fog.width,fog.height,fog.parent);
 			}
 		}
 		private static function removeFog():void

@@ -93,7 +93,7 @@ package view.elements.pageModules
 				layout.clear();
 				for (var k:int = 0; k < valueManager.length; k++) 
 				{
-					createElement(valueManager.getItem(i));
+					createElement(valueManager.getItem(k));
 				}
 			}
 			//add btn
@@ -101,11 +101,13 @@ package view.elements.pageModules
 			layout.addElement(addBtn);
 			
 			layout.update();
+			//dispatchHeightChange();
 		}
 		
 		private function layout_heightChange(e:GlifEvent):void 
 		{
-			dispatchWidthChange();
+			trace(this, 'Height Change',height);
+			dispatchHeightChange();
 		}
 		
 		public function get editable():Boolean 

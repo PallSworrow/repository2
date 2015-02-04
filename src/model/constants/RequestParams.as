@@ -21,11 +21,11 @@ package model.constants
 		
 		public static const LOCAL_TOURS:String = 'localTours';
 		public static const WORLD_TOURS:String = 'worldTours';
-		public static const LOCAL_TOURS_READY:String = 'readyForLocalTours';
-		public static const WORLD_TOURS_READY:String = 'readyForWorldTours';
+		public static const LOCAL_TOURS_READY:String = 'localToursReady';
+		public static const WORLD_TOURS_READY:String = 'worldToursReady';
 		
 		public static const SKILL_LEVEL:String = 'skillLevel';
-		public static const IS_FOR_FREE:String = 'isForFree';
+		public static const IS_FOR_FREE:String = 'forFree';
 		
 		public static const SEARCH_FLAG:String = 'searchFlag';
 		//public static const REQUIRE_FULL_STYLE_MATCH:String = 'requireFullStyleMatch';

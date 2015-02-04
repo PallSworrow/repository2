@@ -8,14 +8,17 @@ package model
 	import flash.net.URLVariables;
 	import flash.text.TextField;
 	import model.constants.AMDMpopup;
+	import model.constants.PopupConstants;
 	import model.loadedData.SearchData;
 	import model.profiles.MusicianProfile;
+	import popupManager.PopupEngine;
 	import PS.model.dataProcessing.assetManager.ColorAsset;
 	import PS.model.popupSystem.factories.CustomPopupFactory;
 	import PS.model.popupSystem.Ipopup;
-	import PS.model.popupSystem.PopupEngine;
+	//import PS.model.popupSystem.PopupEngine;
 	import PS.model.popupSystem.PopupManager;
 	import PS.model.PsImage;
+	import requestFlow.ReqsFlow;
 	import Swarrow.models.Globals;
 	import Swarrow.models.Initialiser;
 	import view.popups.AddInstrumentPopup;
@@ -31,7 +34,15 @@ package model
 		public function AMini(width:int, height:int, stage:Stage) 
 		{
 			super(width, height, stage);
-			PopupEngine.container = stage;
+			//PopupEngine.container = stage;//kill this shit
+			
+			PopupEngine.init(width, height, stage);
+			
+			ReqsFlow.getFlow(PopupConstants.FLOW_MAIN).flowSize = 1;//stack
+			ReqsFlow.getFlow(PopupConstants.FLOW_PUBLIC).flowSize = -1;//infinit
+			
+			PopupEngine.createStage(PopupConstants.STAGE_MAIN, { stage:stage } );
+			
 		}
 		override public function init( completeHandler:Function,config:String = null):void 
 		{
@@ -43,6 +54,7 @@ package model
 		}
 		override protected function readConfig(data:Object):void 
 		{
+			//trace(data);
 			//Globals.stage.addChild(new PsImage(new ColorAsset(100, 100)));
 			var res:Object = JSON.parse(String(data));
 			SearchData.init(res.cities, res.goals,res.instruments, res.instTags,res.styles);
@@ -72,7 +84,7 @@ package model
 			}
 			else 
 			{
-				VK.api('users.get', { user_ids:Data._viewerId, fields:'photo_100, city' }, onProfLoaded, onApiError);
+				VK.api('users.get', { user_ids:Data._viewerId, fields:'photo_400_orig, city' }, onProfLoaded, onApiError);
 			}
 			function onProfLoaded(data:Object):void
 			{
@@ -87,7 +99,7 @@ package model
 				//return;*/
 				var name:String = data[0].first_name+' '+data[0].last_name;
 				var city:String = 'SPB'//data[0].city.title;
-				var photo:String = data[0].photo_100;
+				var photo:String = data[0].photo_400_orig;
 				tf.text = name+', ' + city + ', ' + photo;
 				onEnviromentLoaded(name,city,photo);
 			}

@@ -8,6 +8,7 @@ package view.elements.pageModules {
 	import PS.model.dataProcessing.assetManager.ColorAsset;
 	import PS.model.interfaces.IviewElement;
 	import PS.model.PsImage;
+	import PS.view.button.interfaces.Ibtn;
 	import PS.view.factories.defaults.DefaultButtonFactory;
 	import PS.view.layouts.implementations.tagTyped.SimpleTagLayout;
 	import PS.view.textView.SimpleText;
@@ -21,6 +22,7 @@ package view.elements.pageModules {
 	import view.factories.btns.TagFactory;
 	import view.factories.InstrumentIconFactory;
 	import view.factories.tags.TestTagFactory;
+	import view.popups.AddLinkPopup;
 	
 	/**
 	 * ...
@@ -29,30 +31,36 @@ package view.elements.pageModules {
 	public class SkillView extends LayoutBase 
 	{
 		private var skill:Skill;
+		//glifs:
 		private var icon:DisplayObject;
 		private var tags:TagsModule;
 		private var level:DisplayObject;
-		private var videoLayout:ListLayout;
+		private var videoLayout:ListEditor;
 		private var audioLayout:ListLayout;
 		private var video:Dictionary;
 		private var audio:Dictionary;
+		private var addVideoBtn:Ibtn;
+		private var addAudioBtn:Ibtn;
+		
 		private var editable:Boolean;
+		private var adderPopup:AddLinkPopup;
 		public function SkillView(data:Skill,allowEdit:Boolean) 
 		{
 			super();
 			trueHeight = true;
 			skill = data;
 			editable = allowEdit;
+			adderPopup = new AddLinkPopup();
 			//create glifs
 			
 			icon = InstrumentIconFactory.createIcon(skill.type);
 			tags = new TagsModule('Тэги:',data.tags,new TagFactory(),DefaultButtonFactory.inst,editable)
-			videoLayout = new ListLayout();
+			videoLayout = new ListEditor('Видео:', skill.videos,function(){adderPopup.show({observer:skill.videos})});
 			audioLayout = new ListLayout();
-			videoLayout.ignorNonGlifs = false;
+			//videoLayout.ignorNonGlifs = false;
 			
 			//fill data
-			updateVideo();
+			//updateVideo();
 			updateAudio();
 			//display
 			addChild(icon);
@@ -63,7 +71,7 @@ package view.elements.pageModules {
 			callUpdate();
 			
 		}
-		private function updateVideo(e:ArrayObserverEvent=null):void
+	/*	private function updateVideo(e:ArrayObserverEvent=null):void
 		{
 			var element:IviewElement;
 			var val:String;
@@ -96,7 +104,7 @@ package view.elements.pageModules {
 				delete video[val];
 			}
 			
-		}
+		}*/
 		private function updateAudio(e:ArrayObserverEvent=null):void
 		{
 			var element:IviewElement;
@@ -131,12 +139,12 @@ package view.elements.pageModules {
 			}
 			//placeMethod();
 		}
-		private function createNewVideo(data:String):IviewElement
+	/*	private function createNewVideo(data:String):IviewElement
 		{
 			var res:SimpleText = new SimpleText();
 			res.text = data;
 			return res;
-		}
+		}*/
 		private function createNewAudio(data:String):IviewElement
 		{
 			var res:SimpleText = new SimpleText();
@@ -167,6 +175,15 @@ package view.elements.pageModules {
 			callUpdate();
 		}
 		
+		
+		private function addVideoSource():void
+		{
+			
+		}
+		private function addAudioSource():void
+		{
+			
+		}
 		
 	}
 

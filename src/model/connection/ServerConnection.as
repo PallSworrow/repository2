@@ -3,6 +3,7 @@ package model.connection
 	import flash.events.Event;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
+	import flash.net.URLRequestMethod;
 	import flash.net.URLVariables;
 	import model.Data;
 	import model.profiles.interfaces.Iparsable;
@@ -42,7 +43,7 @@ package model.connection
 			loader.addEventListener(Event.COMPLETE, onComplete);
 			var req:URLRequest = new URLRequest(SERVER+'saveProfile.php');
 			var vars:URLVariables = new URLVariables();
-			vars['user_id'] = Data.viewerId;
+			vars['id'] = Data.viewerId;
 			
 			var res:String;
 			var str:String;
@@ -79,6 +80,7 @@ package model.connection
 						
 				}
 			});
+			req.method = URLRequestMethod.POST;
 			req.data = vars;
 			loader.load(req);
 		}

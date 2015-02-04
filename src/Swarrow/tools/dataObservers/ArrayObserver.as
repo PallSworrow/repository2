@@ -134,8 +134,9 @@ package Swarrow.tools.dataObservers {
 			return _currentValue.length;
 		}
 		
-		public function get prevValue():Array 
+		public function get previousValue():Array 
 		{
+			if (!_prevValue) return null;
 			return _prevValue.slice();
 		}
 		

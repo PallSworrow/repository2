@@ -46,10 +46,10 @@ $db_host="localhost"; // обычно не нужно изменять
 		foreach($arr as $item)
 		{
 			$skill = simplexml_load_string($item);
-			foreach($skill->tags as $tag)
+			foreach($skill->tags->item as $tag)
 			{
 				//inst tags:
-				if(array_search($tag,$instTags) == false && $tag != '') array_push($instTags, '"'.$tag.'"');
+				if(array_search($tag,$instTags) == false && (string)$tag != '') array_push($instTags, '"'.(string)$tag.'"');
 			
 			}
 			//inst types

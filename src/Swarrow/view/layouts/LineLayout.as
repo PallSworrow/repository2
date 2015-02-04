@@ -26,8 +26,8 @@ package Swarrow.view.layouts
 			from = 0;
 			var border:int= width;
 			var item:DisplayObject;
-			var horizontalInterval:int = 0;
-			var verticalInterval:int = 0;
+			var horizontalInterval:int = intervalX;
+			var verticalInterval:int = intervalY;
 			
 			var offsetX:int = 0;
 			var offsetY:int = 0;
@@ -48,14 +48,14 @@ package Swarrow.view.layouts
 				
 				if (border>0 && item.width < border && item.width+offsetX > border)
 				{
-					offsetY += lineHeight + horizontalInterval;
+					offsetY += lineHeight + verticalInterval;
 					
 					offsetX = 0;
 					lineHeight = 0;
 				}
 				item.x = offsetX;
 				item.y = offsetY;
-				offsetX += item.width + verticalInterval;
+				offsetX += item.width + horizontalInterval;
 			}
 			
 			dispatchHeightChange();

@@ -16,10 +16,12 @@ package view.factories.btns {
 		public static const MAIL:String = 'mail';
 		public static const S4BAND:String = 's4band';
 		public static const S4MUS:String = 's4mus';
+		public static const ADD_INSTRUMENT:String = 'add';
 		
 		private static const assets:Object = 
 		{
 			mail:{def:new EmbedAsset(Embeds.mailBtn)},
+			add:{def:new EmbedAsset(Embeds.add_inst)},
 			s4band:{act:new EmbedAsset(Embeds.s4band_1),def:new EmbedAsset(Embeds.s4band_0)},
 			s4mus:{act:new EmbedAsset(Embeds.s4mus_1),def:new EmbedAsset(Embeds.s4mus_0)}
 		

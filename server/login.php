@@ -28,7 +28,7 @@
 	$sql1 = mysql_query($query);
 	if(mysql_num_rows($sql1) == 0)
 	{
-		$query = 'INSERT INTO `users` (`id`,`name`,`city`,`photos`) VALUES ('.$viewer_id.',"'.$name.'","'.$city.'",\'"'.$photo.'"\');'; 
+		$query = 'INSERT INTO `users` (`id`,`name`,`city`,`photos`) VALUES ('.$viewer_id.',"'.$name.'","'.$city.'","'.$photo.'");'; 
 		$sql = mysql_query($query);
 		echo '0&';
 	}

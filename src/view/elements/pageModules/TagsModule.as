@@ -60,6 +60,7 @@ package view.elements.pageModules {
 			textFromat = Fonts.SIMPLE;
 			
 			list = new LineLayout();
+			list.intervalX = 5;
 			list.autoUpdate = false;
 			list.addEventListener(GlifEvent.HEIGHT_CHANGE, list_heightChange);
 			

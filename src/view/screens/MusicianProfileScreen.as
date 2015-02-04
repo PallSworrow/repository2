@@ -9,6 +9,8 @@ package view.screens
 	import model.constants.AMDMpopup;
 	import model.constants.InstrumentType;
 	import model.constants.SkillLevel;
+	import model.constants.values.StageExp;
+	import model.constants.values.WriteExp;
 	import model.Data;
 	import model.Embeds;
 	import model.profiles.interfaces.IskillProfile;
@@ -66,9 +68,16 @@ package view.screens
 			profile = data as MusicianProfile;
 			if (!profile) throw new Error('invaslid input data: ' + data);
 			
-			editable = (profile.id == Data.viewerProfile.id);
+			if (profile.id == Data.viewerProfile.id)
+			{
+				editable = true;
+				profile = Data.viewerProfile;
+			}
+			else editable = false;
 			var columns:Array = ['60%',{paddingLeft:'5%',width:'35%'}]
-			if(editable) profile.addEventListener(Event.CHANGE, profile_change);
+			if (editable) profile.addEventListener(Event.CHANGE, profile_change);
+			
+			trace(this, 'EDITABLE:', editable,profile.id,Data.viewerProfile.id);
 			var res:Array = 
 			[
 				{type:TableMaker.COLUMNS, //HEAD
@@ -150,20 +159,48 @@ package view.screens
 									provider:new IntrumentsModuleFactory()
 								},
 								{type:TableMaker.GLIF,
-									params:{manager:profile.localTours, name: 'Местные туры', editable:editable},
-									provider:checkBoxProvider
-								}
-								,
-								{type:TableMaker.GLIF,
 									params: { manager:profile.stageExperience, name: 'Опыт выступлений', editable:editable,
-									options:['хер с горы','номана','збс']},
+									options:StageExp.list},
 									provider:checkBoxProvider
 								},
 								{type:TableMaker.GLIF,
 									params: { manager:profile.writeExperience, name: 'Опыт записи', editable:editable,
-									options:['хер с горы','номана','збс']},
+									options:WriteExp.list},
+									provider:checkBoxProvider
+								},
+								{type:TableMaker.GLIF,
+									params:{manager:profile.localTours, name: 'Местные туры', editable:editable},
+									provider:checkBoxProvider
+								},
+								{type:TableMaker.GLIF,
+									params:{manager:profile.worldTours, name: 'Международные туры', editable:editable},
+									provider:checkBoxProvider
+								},
+								{type:TableMaker.GLIF,
+									params: { manager:profile.localToursReady, name: 'Готов к местным турам', editable:editable},
+									provider:checkBoxProvider
+								},
+								{type:TableMaker.GLIF,
+									params: { manager:profile.worldToursReady, name: 'Готов к международным турам', editable:editable},
+									provider:checkBoxProvider
+								},
+								{type:TableMaker.GLIF,
+									params: { manager:profile.cityChangeReady, name: 'Готов к смене города', editable:editable},
+									provider:checkBoxProvider
+								},
+								{type:TableMaker.GLIF,
+									params: { manager:profile.countryChangeReady, name: 'Готов к смене сраны', editable:editable},
+									provider:checkBoxProvider
+								},
+								{type:TableMaker.GLIF,
+									params: { manager:profile.passport, name: 'Есть загран. паспорт', editable:editable},
+									provider:checkBoxProvider
+								},
+								{type:TableMaker.GLIF,
+									params: { manager:profile.forFree, name: 'Готов играть бесплатно', editable:editable},
 									provider:checkBoxProvider
 								}
+								
 							]
 						}
 					]	
@@ -174,8 +211,8 @@ package view.screens
 		
 		private function profile_change(e:Event):void 
 		{
-			trace('PROFILE CHANGE');
-			ServerConnection.saveProfile(e.target as MusicianProfile,function(e:Event){});
+			//trace('PROFILE CHANGE');
+			ServerConnection.saveProfile(e.target as MusicianProfile, function(e:Event) {/* trace(this, 'SAVED', e.target.data); */} );
 		}
 		private function createInstrument(list:Vector.<String>, handler:Function):void
 		{

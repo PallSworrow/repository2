@@ -33,22 +33,23 @@ package view.elements.pageModules {
 		{
 			
 			vm = valueManager;
+			vm.addEventListener(Event.CHANGE, updateView);
 			options = Vector.<String>(valueOptions);
 			//create glif:
 			tf = SimpleTextFactory.inst.createText();
 			tf.autoSize = 'left';
 			tf.multiline = false;
 			tf.wordWrap = false;
-			tf.text = name;
+			//tf.text = name;
 			
 			valueTf = SimpleTextFactory.inst.createText();
 			valueTf.autoSize = 'left';
 			valueTf.multiline = false;
 			valueTf.wordWrap = false;
-			valueTf.text = options[vm.currentValue];
+			//valueTf.text = options[vm.currentValue];
 			
 			btn = btnProvider.createButton(name);
-			if (vm.currentValue > 0) btn.setPhaze(ButtonPhaze.ACTIVE);
+			//if (vm.currentValue > 0) btn.setPhaze(ButtonPhaze.ACTIVE);
 			
 			tf.x = btn.width;
 			valueTf.x = tf.x + tf.width;
@@ -57,10 +58,19 @@ package view.elements.pageModules {
 			addChild(tf);
 			addChild(valueTf);
 			
-			
+			updateView();
 			//create cloude:
 			var list:SimpleListLayout = new SimpleListLayout();
-			for each(var option:String in valueOptions) list.addItem(createOptionItem(option));
+			//for each(var option:String in valueOptions) 
+			var b:Ibtn;
+			for (var i:int = 0; i < valueOptions.length; i++) 
+			{
+				b = createOptionItem(valueOptions[i]);
+				trace(this, 'createBtn' + i, valueOptions[i]);
+				b.setHandler(onOptionTap, i);
+				list.addItem(b);
+				
+			}
 			cloud = new CloudWindow(list);
 			cloud.offsetY = btn.height;
 			
@@ -72,14 +82,34 @@ package view.elements.pageModules {
 			
 		}
 		
-		private function createOptionItem(option:String):IviewElement 
+		private function updateView(e:Event = null ):void 
 		{
+			valueTf.text = options[vm.currentValue];
+			if (vm.currentValue == 0)
+			btn.setPhaze(ButtonPhaze.DEFAULT);
+			else
+			btn.setPhaze(ButtonPhaze.ACTIVE);
+		}
+		
+		private function onOptionTap(i:int):void 
+		{
+			trace(this,'TAP ', i);
+			vm.currentValue = i;
+			cloud.hide();
+		}
+		
+		private function createOptionItem(option:String):Ibtn 
+		{
+			var res:PsButton = new PsButton();
 			var tf:SimpleText = new SimpleText();
 			tf.wordWrap = false;
 			tf.multiline = false;
 			tf.autoSize = 'left';
 			tf.text = option;
-			return tf;
+			tf.border = true;
+			tf.background = true;
+			res.addChild(tf);
+			return res;
 		}
 		public function get editable():Boolean 
 		{

@@ -25,7 +25,7 @@
 	$props = array();
 	foreach ($p as $key => $value)
 	{
-		array_push($props," ".$key." ='".$value."'"); 
+		array_push($props," `".$key."` ='".$value."'"); 
 	}
 /* 	array_push($props,"city = '".$p['city']."'");
 	array_push($props,"cityChangeReady = '".$p['cityChangeReady']."'");
